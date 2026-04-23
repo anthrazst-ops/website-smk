@@ -1,0 +1,309 @@
+<?php
+// Logika PHP untuk menangani Form Kontak
+$pesan_status = "";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nama = htmlspecialchars($_POST['nama']);
+    $pesan_status = "Halo $nama, pesan Anda telah berhasil dikirim ke sistem CyberSMK!";
+}
+?>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSMK - Yapalis Krian</title>
+    <style>
+        /* --- CSS STYLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animasi Bintang */
+        #stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: moveStars linear infinite;
+        }
+
+        @keyframes moveStars {
+            from { transform: translateY(0); }
+            to { transform: translateY(-1000px); }
+        }
+
+        /* Navigasi */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: rgba(10, 25, 47, 0.85);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .logo { font-size: 1.8rem; font-weight: 800; color: #00d4ff; letter-spacing: 2px; }
+        .logo span { color: #ffffff; }
+
+        nav ul { display: flex; list-style: none; }
+        nav ul li { margin-left: 30px; }
+        nav ul li a { 
+            color: white; 
+            text-decoration: none; 
+            font-size: 14px; 
+            text-transform: uppercase;
+            transition: 0.3s;
+            letter-spacing: 1px;
+        }
+        nav ul li a:hover { color: #00d4ff; }
+
+        /* Hero Section */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        header h1 { 
+            font-size: clamp(2.5rem, 8vw, 4rem); 
+            margin-bottom: 20px; 
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        header p { font-size: 1.2rem; color: #ccd6f6; max-width: 600px; margin-bottom: 30px; }
+
+        .btn-main {
+            padding: 15px 40px;
+            background: transparent;
+            color: #00d4ff;
+            border: 2px solid #00d4ff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.4s;
+            text-transform: uppercase;
+        }
+
+        .btn-main:hover {
+            background: #00d4ff;
+            color: #0a192f;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Fitur Section */
+        section { padding: 100px 8%; }
+        .section-title { text-align: center; margin-bottom: 50px; font-size: 2.5rem; }
+        .section-title span { color: #00d4ff; }
+
+        .grid-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.07);
+            border-color: #00d4ff;
+        }
+
+        .card h3 { color: #00d4ff; margin-bottom: 15px; font-size: 1.5rem; }
+        .card p { color: #8892b0; line-height: 1.6; }
+
+        /* Form Kontak */
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(10, 25, 47, 0.6);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.1);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #233554;
+            color: white;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        input:focus, textarea:focus { border-color: #00d4ff; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #00d4ff;
+            border: none;
+            color: #0a192f;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .submit-btn:hover { background: #00b8e6; }
+
+        .status-msg {
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            border-radius: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="stars-container"></div>
+
+    <nav>
+        <div class="logo">CYBER<span>SMK</span></div>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#fitur">Fitur</a></li>
+            <li><a href="#kontak">Kontak</a></li>
+        </ul>
+    </nav>
+
+    <header id="home">
+        <h1>CyberSMK Yapalis</h1>
+        <p>Membangun Generasi Digital yang Kompeten, Inovatif, dan Berdaya Saing Global di Era Industri 4.0.</p>
+        <button class="btn-main" onclick="location.href='#fitur'">Eksplorasi Sekarang</button>
+    </header>
+
+    <section id="fitur">
+        <h2 class="section-title">Fitur <span>Masa Depan</span></h2>
+        <div class="grid-features">
+            <div class="card">
+                <h3>Cyber Security</h3>
+                <p>Mempelajari teknik perlindungan data dan keamanan jaringan tingkat lanjut.</p>
+            </div>
+            <div class="card">
+                <h3>Cloud Computing</h3>
+                <p>Infrastruktur modern menggunakan teknologi awan untuk skalabilitas tanpa batas.</p>
+            </div>
+            <div class="card">
+                <h3>AI & Robotics</h3>
+                <p>Pengembangan kecerdasan buatan untuk solusi otomatisasi masa kini.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="kontak">
+        <h2 class="section-title">Hubungi <span>Admin</span></h2>
+        <div class="contact-container">
+            <?php if ($pesan_status): ?>
+                <div class="status-msg"><?php echo $pesan_status; ?></div>
+            <?php endif; ?>
+            
+            <form method="POST" action="#kontak">
+                <input type="text" name="nama" placeholder="Nama Lengkap" required>
+                <input type="email" name="email" placeholder="Alamat Email" required>
+                <textarea name="pesan" rows="5" placeholder="Tuliskan pesan Anda di sini..." required></textarea>
+                <button type="submit" class="submit-btn">Kirim Pesan Ke Antariksa</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 CyberSMK Yapalis Krian | Powered by Digital Innovation</p>
+    </footer>
+
+    <script>
+        // generate Bintang Secara Dinamis
+        const container = document.getElementById('stars-container');
+        const starCount = 150;
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            
+            // Posisi Acak
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            
+            // Ukuran Acak
+            const size = Math.random() * 2 + 'px';
+            
+            // Kecepatan Animasi Acak
+            const duration = Math.random() * 50 + 50 + 's';
+            const delay = Math.random() * -100 + 's';
+
+            star.style.left = x + 'px';
+            star.style.top = y + 'px';
+            star.style.width = size;
+            star.style.height = size;
+            star.style.animationDuration = duration;
+            star.style.animationDelay = delay;
+
+            container.appendChild(star);
+        }
+
+        // Efek Navbar saat scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.padding = '15px 8%';
+                nav.style.background = 'rgba(10, 25, 47, 0.95)';
+            } else {
+                nav.style.padding = '20px 8%';
+                nav.style.background = 'rgba(10, 25, 47, 0.85)';
+            }
+        });
+    </script>
+</body>
+</html>
