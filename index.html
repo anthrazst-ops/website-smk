@@ -22,6 +22,7 @@
         body {
             background-color: var(--dark-bg); color: var(--neon-blue);
             overflow-x: hidden; min-height: 100vh;
+            display: flex; flex-direction: column;
         }
 
         /* Matrix Background */
@@ -55,13 +56,12 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 8%; background: rgba(3, 11, 22, 0.95);
             border-bottom: 2px solid var(--neon-blue);
-            position: absolute; top: 0; width: 100%; z-index: 1000;
+            position: fixed; top: 0; width: 100%; z-index: 1000;
             box-shadow: 0 0 15px var(--neon-blue); height: 80px;
         }
 
-        .logo { font-size: 1.8rem; font-weight: bold; color: var(--neon-blue); z-index: 20;}
+        .logo { font-size: 1.8rem; font-weight: bold; color: var(--neon-blue); z-index: 20; cursor: pointer;}
         
-        /* Navigasi Instagram di Pojok Kanan */
         .nav-instagram { z-index: 20; }
         .nav-instagram a {
             color: white; text-decoration: none; font-size: 0.8rem;
@@ -69,9 +69,9 @@
         }
         .nav-instagram a:hover { color: var(--neon-blue); text-shadow: 0 0 8px var(--neon-blue); }
 
-        /* --- TOMBOL NAVIGASI HISTORI (< dan >) --- */
+        /* --- TOMBOL NAVIGASI HISTORI --- */
         .nav-controls {
-            position: absolute; top: 100px; left: 8%; z-index: 990;
+            position: fixed; top: 100px; left: 8%; z-index: 990;
             display: flex; gap: 10px;
         }
 
@@ -90,7 +90,7 @@
             opacity: 0.2; cursor: not-allowed; border-color: #555; color: #555;
         }
 
-        /* --- TRACK & DINOSAURUS CUTE MATRIX GLITCH --- */
+        /* --- TRACK DINOSAURUS --- */
         .dino-track {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 25px;
             overflow: hidden; pointer-events: none; z-index: 10;
@@ -142,17 +142,17 @@
 
         /* --- SISTEM PAGE SPA --- */
         main {
-            width: 100%; min-height: 100vh; display: flex; flex-direction: column;
+            width: 100%; display: flex; flex-direction: column; flex-grow: 1;
         }
 
         .page-view { 
-            display: none; padding-top: 150px; padding-bottom: 60px;
-            animation: fadeInPage 0.4s ease-in forwards; width: 100%; flex-grow: 1;
+            display: none; padding-top: 160px; padding-bottom: 60px;
+            animation: fadeInPage 0.4s ease-in forwards; width: 100%; min-height: 100vh;
         }
         
         #view-home { 
             flex-direction: column; justify-content: center; align-items: center; 
-            text-align: center; padding-top: 0; min-height: 100vh;
+            text-align: center; padding-top: 80px;
         }
 
         @keyframes fadeInPage {
@@ -160,8 +160,8 @@
             to { opacity: 1; transform: scale(1); filter: blur(0); }
         }
 
-        #view-home h1 { font-size: clamp(2rem, 10vw, 5rem); margin-bottom: 10px; }
-        #view-home p { font-size: 1.1rem; color: #8892b0; max-width: 700px; margin-bottom: 30px; padding: 0 20px;}
+        #view-home h1 { font-size: clamp(2rem, 8vw, 5rem); margin-bottom: 10px; }
+        #view-home p { font-size: clamp(0.9rem, 3vw, 1.1rem); color: #8892b0; max-width: 700px; margin-bottom: 30px; padding: 0 20px;}
 
         .btn-main {
             padding: 15px 40px; background: var(--neon-blue); color: var(--dark-bg);
@@ -174,13 +174,13 @@
         }
 
         .section-title { 
-            text-align: center; margin-bottom: 25px; font-size: 1.6rem; 
+            text-align: center; margin-bottom: 25px; font-size: clamp(1.2rem, 4vw, 1.6rem); 
             border-bottom: 1px solid var(--neon-blue); display: inline-block; width: 100%; padding-bottom: 8px;
         }
 
-        /* --- KARTU (GRID & LARGE) REVISI KECIL --- */
+        /* --- KARTU --- */
         .grid-features {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; padding: 0 8%;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; padding: 0 8%;
         }
 
         .card {
@@ -193,57 +193,81 @@
         }
         .card:hover { background: rgba(0, 212, 255, 0.05); }
 
-        /* Tinggi kartu grid diperkecil */
-        .card-grid { height: 180px; }
+        .card-grid { height: 200px; }
         
-        /* Kartu besar di bawah diperkecil */
         .card-large {
-            margin: 25px 8% 0; /* Align with grid padding */
-            padding: 20px; height: auto;
+            margin: 25px 8% 0; padding: 20px; height: auto;
             border-color: rgba(0, 212, 255, 0.3);
         }
 
-        .card-content { padding: 15px; transition: filter 0.4s ease; height: 100%; }
+        .card-content { padding: 20px; transition: filter 0.4s ease; height: 100%; }
         .card-large .card-content { padding: 0; }
         
-        /* Font size diperkecil */
-        .card-content h3 { font-size: 1rem; margin-bottom: 8px; }
+        .card-content h3 { font-size: 1.1rem; margin-bottom: 8px; }
         .card-large .card-content h3 { font-size: 1.3rem; margin-bottom: 12px; }
         
-        .card-content p { font-size: 0.8rem; line-height: 1.4; color: #a1aabf; }
-        .card-large .card-content p { font-size: 0.9rem; color: #c0c8df; line-height: 1.5;}
+        .card-content p { font-size: 0.85rem; line-height: 1.4; color: #a1aabf; }
+        .card-large .card-content p { font-size: 0.95rem; color: #c0c8df; line-height: 1.5;}
 
-        /* --- INTERAKSI BLUR HANYA UNTUK KARTU YANG PUNYA OVERLAY --- */
+        /* --- INTERAKSI BLUR --- */
         .card-interactive .card-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(3, 11, 22, 0.88); display: flex; justify-content: center; align-items: center;
             opacity: 0; transition: opacity 0.4s ease; z-index: 10;
         }
 
-        .card-interactive:hover .card-content { filter: blur(4px); }
-        .card-interactive:hover .card-overlay { opacity: 1; }
+        /* Efek khusus Desktop */
+        @media (hover: hover) and (pointer: fine) {
+            .card-interactive:hover .card-content { filter: blur(4px); }
+            .card-interactive:hover .card-overlay { opacity: 1; }
+        }
 
-        /* --- WARNA TOMBOL DINAMIS DI OVERLAY --- */
         .btn-small {
             padding: 8px 16px; background: transparent; cursor: pointer; font-weight: bold; 
             transition: 0.3s; font-size: 0.8rem; border: 1px solid;
         }
         
-        /* Tombol Purple Team */
         .btn-purple { color: var(--purple-team); border-color: var(--purple-team); }
         .btn-purple:hover { background: var(--purple-team); color: var(--dark-bg); box-shadow: 0 0 12px var(--purple-team); }
-
-        /* Tombol Blue Team */
         .btn-blue { color: var(--neon-blue); border-color: var(--neon-blue); }
         .btn-blue:hover { background: var(--neon-blue); color: var(--dark-bg); box-shadow: 0 0 12px var(--neon-blue); }
-
-        /* Tombol Coder/Green Team */
         .btn-green { color: var(--terminal-green); border-color: var(--terminal-green); }
         .btn-green:hover { background: var(--terminal-green); color: var(--dark-bg); box-shadow: 0 0 12px var(--terminal-green); }
 
         footer {
-            text-align: center; padding: 25px; background: #020810;
+            text-align: center; padding: 20px; background: #020810;
             font-size: 0.75rem; border-top: 1px solid var(--neon-blue); width: 100%; margin-top: auto;
+        }
+
+        /* ========================================= */
+        /* MEDIA QUERIES (OPTIMISASI UNTUK HANDPHONE) */
+        /* ========================================= */
+        @media screen and (max-width: 768px) {
+            nav {
+                flex-direction: column; height: auto; padding: 15px 5%;
+                gap: 10px;
+            }
+            
+            .logo { font-size: 1.4rem; }
+            
+            .nav-controls {
+                top: 95px; left: 50%; transform: translateX(-50%);
+                width: 90%; justify-content: center;
+            }
+
+            .page-view { padding-top: 170px; } /* Kompensasi nav yang lebih tebal */
+
+            .grid-features { grid-template-columns: 1fr; padding: 0 5%; gap: 20px; }
+            .card-large { margin: 25px 5% 0; }
+            
+            .card-grid { height: auto; min-height: 160px; padding-bottom: 50px; }
+
+            /* Menampilkan tombol langsung tanpa hover di Mobile agar mudah disentuh */
+            .card-interactive .card-overlay {
+                opacity: 1; background: linear-gradient(transparent, rgba(3, 11, 22, 0.95));
+                align-items: flex-end; padding-bottom: 15px;
+            }
+            .card-interactive .card-content { filter: none !important; }
         }
     </style>
 </head>
@@ -252,7 +276,7 @@
     <canvas id="matrix-canvas"></canvas>
 
     <nav>
-        <div class="logo glitch" data-text="CYBERSKALISKA">CYBER SMK YAPALIS</div>
+        <div class="logo glitch" data-text="CYBERSKALISKA" onclick="resetToHome()">CYBER SMK YAPALIS</div>
         
         <div class="nav-instagram">
             <a href="https://www.instagram.com/cybersmkyapaliskrian" target="_blank">@cybersmkyapaliskrian</a>
@@ -304,7 +328,6 @@
 
         <section id="view-intro" class="page-view">
             <h2 class="section-title">SEKTOR KOMPETENSI SIBER</h2>
-            
             <div class="grid-features">
                 <div class="card card-grid card-interactive">
                     <div class="card-content">
@@ -334,7 +357,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card card-large">
                 <div class="card-content">
                     <h3 style="color: var(--neon-blue);">>_ CORE DIRECTIVE</h3>
@@ -345,7 +367,6 @@
 
         <section id="view-cap-darkowl" class="page-view">
             <h2 class="section-title" style="color: var(--purple-team); border-color: var(--purple-team);">KOMPETENSI PURPLE TEAM</h2>
-            
             <div class="grid-features">
                 <div class="card card-grid">
                     <div class="card-content">
@@ -360,7 +381,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card card-large" style="border-top-color: var(--purple-team); border-left-color: var(--purple-team);">
                 <div class="card-content">
                     <h3 style="color: var(--purple-team);">>_ PURPLE DOCTRINE</h3>
@@ -371,7 +391,6 @@
 
         <section id="view-cap-gargant" class="page-view">
             <h2 class="section-title">KOMPETENSI BLUE TEAM</h2>
-            
             <div class="grid-features">
                 <div class="card card-grid">
                     <div class="card-content">
@@ -386,7 +405,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card card-large">
                 <div class="card-content">
                     <h3 style="color: var(--neon-blue);">>_ BLUE PROTOCOL</h3>
@@ -397,7 +415,6 @@
 
         <section id="view-cap-lumprat" class="page-view">
             <h2 class="section-title" style="color: var(--terminal-green); border-color: var(--terminal-green);">KOMPETENSI CODERS</h2>
-            
             <div class="grid-features">
                 <div class="card card-grid">
                     <div class="card-content">
@@ -412,7 +429,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card card-large" style="border-top-color: var(--terminal-green); border-left-color: var(--terminal-green);">
                 <div class="card-content">
                     <h3 style="color: var(--terminal-green);">>_ CODER INITIATIVE</h3>
@@ -424,38 +440,58 @@
 
     <footer>
         <p>&copy; 11/02/2026 | CYBERSKALISKA | ACRYLIC-17</p>
-        <p>         SMK Yapalis Krian, Sidoarjo, Jatim.</p>
+        <p>        SMK Yapalis Krian, Sidoarjo, Jatim.</p>
     </footer>
 
     <script>
-        // Matrix Rain Animation
+        // --- Optimasi Matrix Canvas (menggunakan requestAnimationFrame) ---
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*';
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-        for (let x = 0; x < columns; x++) drops[x] = 1;
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(3, 11, 22, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#00ff41';
-            ctx.font = fontSize + 'px monospace';
-            for (let i = 0; i < drops.length; i++) {
-                const text = characters.charAt(Math.floor(Math.random() * characters.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            }
-        }
-        setInterval(drawMatrix, 35);
-        window.addEventListener('resize', () => {
+        
+        function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*';
+        const fontSize = 14;
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = [];
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+
+        // Reset drops jika layar di-resize agar tetap proporsional
+        window.addEventListener('resize', () => {
+            columns = Math.floor(canvas.width / fontSize);
+            drops = [];
+            for (let x = 0; x < columns; x++) drops[x] = 1;
         });
+
+        let lastDrawTime = 0;
+        const fps = 25; // Membatasi FPS agar tidak menguras RAM & Baterai HP
+        const interval = 1000 / fps;
+
+        function drawMatrix(timestamp) {
+            requestAnimationFrame(drawMatrix);
+            
+            const deltaTime = timestamp - lastDrawTime;
+            if (deltaTime > interval) {
+                ctx.fillStyle = 'rgba(3, 11, 22, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00ff41';
+                ctx.font = fontSize + 'px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+                lastDrawTime = timestamp - (deltaTime % interval);
+            }
+        }
+        requestAnimationFrame(drawMatrix);
 
         // --- SISTEM ROUTING SPA ---
         let pageHistory = ['view-home'];
@@ -480,11 +516,9 @@
             btnBack.disabled = (currentIndex === 0);
             btnForward.disabled = (currentIndex === pageHistory.length - 1);
             
-            // Otomatis klik logo untuk reset ke home jika di nav Instagram
-            window.scrollTo(0, 0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Fungsi navigasi yang dipanggil nav Instagram (jika ingin reset)
         function resetToHome() {
             pageHistory = ['view-home'];
             currentIndex = 0;
