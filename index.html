@@ -22,7 +22,6 @@
         body {
             background-color: var(--dark-bg); color: var(--neon-blue);
             overflow-x: hidden; min-height: 100vh;
-            display: flex; flex-direction: column;
         }
 
         /* Matrix Background */
@@ -56,12 +55,13 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 8%; background: rgba(3, 11, 22, 0.95);
             border-bottom: 2px solid var(--neon-blue);
-            position: fixed; top: 0; width: 100%; z-index: 1000;
+            position: absolute; top: 0; width: 100%; z-index: 1000;
             box-shadow: 0 0 15px var(--neon-blue); height: 80px;
         }
 
-        .logo { font-size: 1.8rem; font-weight: bold; color: var(--neon-blue); z-index: 20; cursor: pointer;}
+        .logo { font-size: 1.8rem; font-weight: bold; color: var(--neon-blue); z-index: 20;}
         
+        /* Navigasi Instagram di Pojok Kanan */
         .nav-instagram { z-index: 20; }
         .nav-instagram a {
             color: white; text-decoration: none; font-size: 0.8rem;
@@ -69,9 +69,9 @@
         }
         .nav-instagram a:hover { color: var(--neon-blue); text-shadow: 0 0 8px var(--neon-blue); }
 
-        /* --- TOMBOL NAVIGASI HISTORI --- */
+        /* --- TOMBOL NAVIGASI HISTORI (< dan >) --- */
         .nav-controls {
-            position: fixed; top: 100px; left: 8%; z-index: 990;
+            position: absolute; top: 100px; left: 8%; z-index: 990;
             display: flex; gap: 10px;
         }
 
@@ -90,7 +90,7 @@
             opacity: 0.2; cursor: not-allowed; border-color: #555; color: #555;
         }
 
-        /* --- TRACK DINOSAURUS --- */
+        /* --- TRACK & DINOSAURUS CUTE MATRIX GLITCH --- */
         .dino-track {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 25px;
             overflow: hidden; pointer-events: none; z-index: 10;
@@ -142,17 +142,17 @@
 
         /* --- SISTEM PAGE SPA --- */
         main {
-            width: 100%; display: flex; flex-direction: column; flex-grow: 1;
+            width: 100%; min-height: 100vh; display: flex; flex-direction: column;
         }
 
         .page-view { 
-            display: none; padding-top: 160px; padding-bottom: 60px;
-            animation: fadeInPage 0.4s ease-in forwards; width: 100%; min-height: 100vh;
+            display: none; padding-top: 150px; padding-bottom: 60px;
+            animation: fadeInPage 0.4s ease-in forwards; width: 100%; flex-grow: 1;
         }
         
         #view-home { 
             flex-direction: column; justify-content: center; align-items: center; 
-            text-align: center; padding-top: 80px;
+            text-align: center; padding-top: 0; min-height: 100vh;
         }
 
         @keyframes fadeInPage {
@@ -160,8 +160,8 @@
             to { opacity: 1; transform: scale(1); filter: blur(0); }
         }
 
-        #view-home h1 { font-size: clamp(2rem, 8vw, 5rem); margin-bottom: 10px; }
-        #view-home p { font-size: clamp(0.9rem, 3vw, 1.1rem); color: #8892b0; max-width: 700px; margin-bottom: 30px; padding: 0 20px;}
+        #view-home h1 { font-size: clamp(2rem, 10vw, 5rem); margin-bottom: 10px; }
+        #view-home p { font-size: 1.1rem; color: #8892b0; max-width: 700px; margin-bottom: 30px; padding: 0 20px;}
 
         .btn-main {
             padding: 15px 40px; background: var(--neon-blue); color: var(--dark-bg);
@@ -174,13 +174,13 @@
         }
 
         .section-title { 
-            text-align: center; margin-bottom: 25px; font-size: clamp(1.2rem, 4vw, 1.6rem); 
+            text-align: center; margin-bottom: 25px; font-size: 1.6rem; 
             border-bottom: 1px solid var(--neon-blue); display: inline-block; width: 100%; padding-bottom: 8px;
         }
 
-        /* --- KARTU --- */
+        /* --- KARTU (GRID & LARGE) REVISI KECIL --- */
         .grid-features {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; padding: 0 8%;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; padding: 0 8%;
         }
 
         .card {
@@ -193,35 +193,36 @@
         }
         .card:hover { background: rgba(0, 212, 255, 0.05); }
 
-        .card-grid { height: 200px; }
+        .card-grid { height: 180px; }
         
         .card-large {
             margin: 25px 8% 0; padding: 20px; height: auto;
             border-color: rgba(0, 212, 255, 0.3);
         }
 
-        .card-content { padding: 20px; transition: filter 0.4s ease; height: 100%; }
+        .card-content { padding: 15px; transition: filter 0.4s ease; height: 100%; }
         .card-large .card-content { padding: 0; }
         
-        .card-content h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .card-content h3 { font-size: 1rem; margin-bottom: 8px; }
         .card-large .card-content h3 { font-size: 1.3rem; margin-bottom: 12px; }
         
-        .card-content p { font-size: 0.85rem; line-height: 1.4; color: #a1aabf; }
-        .card-large .card-content p { font-size: 0.95rem; color: #c0c8df; line-height: 1.5;}
+        .card-content p { font-size: 0.8rem; line-height: 1.4; color: #a1aabf; }
+        .card-large .card-content p { font-size: 0.9rem; color: #c0c8df; line-height: 1.5;}
 
-        /* --- INTERAKSI BLUR --- */
+        /* --- INTERAKSI BLUR HANYA UNTUK KARTU YANG PUNYA OVERLAY --- */
         .card-interactive .card-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(3, 11, 22, 0.88); display: flex; justify-content: center; align-items: center;
             opacity: 0; transition: opacity 0.4s ease; z-index: 10;
         }
 
-        /* Efek khusus Desktop */
+        /* Hover efek hanya berjalan kalau kursor mendeteksi mouse (desktop) */
         @media (hover: hover) and (pointer: fine) {
             .card-interactive:hover .card-content { filter: blur(4px); }
             .card-interactive:hover .card-overlay { opacity: 1; }
         }
 
+        /* --- WARNA TOMBOL DINAMIS DI OVERLAY --- */
         .btn-small {
             padding: 8px 16px; background: transparent; cursor: pointer; font-weight: bold; 
             transition: 0.3s; font-size: 0.8rem; border: 1px solid;
@@ -235,37 +236,23 @@
         .btn-green:hover { background: var(--terminal-green); color: var(--dark-bg); box-shadow: 0 0 12px var(--terminal-green); }
 
         footer {
-            text-align: center; padding: 20px; background: #020810;
+            text-align: center; padding: 25px; background: #020810;
             font-size: 0.75rem; border-top: 1px solid var(--neon-blue); width: 100%; margin-top: auto;
         }
 
-        /* ========================================= */
-        /* MEDIA QUERIES (OPTIMISASI UNTUK HANDPHONE) */
-        /* ========================================= */
+        /* --- MURNI OPTIMASI MOBILE SAJA TANPA MERUBAH POSISI ABSOLUTE MU --- */
         @media screen and (max-width: 768px) {
-            nav {
-                flex-direction: column; height: auto; padding: 15px 5%;
-                gap: 10px;
-            }
+            nav { padding: 15px 5%; }
+            .logo { font-size: 1.3rem; }
+            .nav-controls { left: 5%; top: 95px; } /* Tetap di kiri atas, padding disesuaikan sedikit */
             
-            .logo { font-size: 1.4rem; }
-            
-            .nav-controls {
-                top: 95px; left: 50%; transform: translateX(-50%);
-                width: 90%; justify-content: center;
-            }
-
-            .page-view { padding-top: 170px; } /* Kompensasi nav yang lebih tebal */
-
-            .grid-features { grid-template-columns: 1fr; padding: 0 5%; gap: 20px; }
+            .grid-features { grid-template-columns: 1fr; padding: 0 5%; } /* Grid jadi ke bawah biar gak gepeng */
             .card-large { margin: 25px 5% 0; }
             
-            .card-grid { height: auto; min-height: 160px; padding-bottom: 50px; }
-
-            /* Menampilkan tombol langsung tanpa hover di Mobile agar mudah disentuh */
+            /* Di HP, tombol decrypt langsung dimunculin di bawah biar gampang dipencet */
             .card-interactive .card-overlay {
                 opacity: 1; background: linear-gradient(transparent, rgba(3, 11, 22, 0.95));
-                align-items: flex-end; padding-bottom: 15px;
+                align-items: flex-end; padding-bottom: 10px;
             }
             .card-interactive .card-content { filter: none !important; }
         }
@@ -276,7 +263,7 @@
     <canvas id="matrix-canvas"></canvas>
 
     <nav>
-        <div class="logo glitch" data-text="CYBERSKALISKA" onclick="resetToHome()">CYBER SMK YAPALIS</div>
+        <div class="logo glitch" data-text="CYBERSKALISKA">CYBER SMK YAPALIS</div>
         
         <div class="nav-instagram">
             <a href="https://www.instagram.com/cybersmkyapaliskrian" target="_blank">@cybersmkyapaliskrian</a>
@@ -328,6 +315,7 @@
 
         <section id="view-intro" class="page-view">
             <h2 class="section-title">SEKTOR KOMPETENSI SIBER</h2>
+            
             <div class="grid-features">
                 <div class="card card-grid card-interactive">
                     <div class="card-content">
@@ -357,6 +345,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="card card-large">
                 <div class="card-content">
                     <h3 style="color: var(--neon-blue);">>_ CORE DIRECTIVE</h3>
@@ -367,6 +356,7 @@
 
         <section id="view-cap-darkowl" class="page-view">
             <h2 class="section-title" style="color: var(--purple-team); border-color: var(--purple-team);">KOMPETENSI PURPLE TEAM</h2>
+            
             <div class="grid-features">
                 <div class="card card-grid">
                     <div class="card-content">
@@ -381,6 +371,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="card card-large" style="border-top-color: var(--purple-team); border-left-color: var(--purple-team);">
                 <div class="card-content">
                     <h3 style="color: var(--purple-team);">>_ PURPLE DOCTRINE</h3>
@@ -391,6 +382,7 @@
 
         <section id="view-cap-gargant" class="page-view">
             <h2 class="section-title">KOMPETENSI BLUE TEAM</h2>
+            
             <div class="grid-features">
                 <div class="card card-grid">
                     <div class="card-content">
@@ -405,6 +397,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="card card-large">
                 <div class="card-content">
                     <h3 style="color: var(--neon-blue);">>_ BLUE PROTOCOL</h3>
@@ -415,6 +408,7 @@
 
         <section id="view-cap-lumprat" class="page-view">
             <h2 class="section-title" style="color: var(--terminal-green); border-color: var(--terminal-green);">KOMPETENSI CODERS</h2>
+            
             <div class="grid-features">
                 <div class="card card-grid">
                     <div class="card-content">
@@ -429,6 +423,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="card card-large" style="border-top-color: var(--terminal-green); border-left-color: var(--terminal-green);">
                 <div class="card-content">
                     <h3 style="color: var(--terminal-green);">>_ CODER INITIATIVE</h3>
@@ -444,7 +439,7 @@
     </footer>
 
     <script>
-        // --- Optimasi Matrix Canvas (menggunakan requestAnimationFrame) ---
+        // --- Optimasi Matrix Canvas (menggunakan requestAnimationFrame biar gak membebani CPU/HP) ---
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         
@@ -461,7 +456,6 @@
         let drops = [];
         for (let x = 0; x < columns; x++) drops[x] = 1;
 
-        // Reset drops jika layar di-resize agar tetap proporsional
         window.addEventListener('resize', () => {
             columns = Math.floor(canvas.width / fontSize);
             drops = [];
@@ -469,7 +463,7 @@
         });
 
         let lastDrawTime = 0;
-        const fps = 25; // Membatasi FPS agar tidak menguras RAM & Baterai HP
+        const fps = 30; // Limit FPS untuk ngurangin beban render HP
         const interval = 1000 / fps;
 
         function drawMatrix(timestamp) {
@@ -516,6 +510,7 @@
             btnBack.disabled = (currentIndex === 0);
             btnForward.disabled = (currentIndex === pageHistory.length - 1);
             
+            // Otomatis scroll ke atas pas pindah halaman
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
