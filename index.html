@@ -5,13 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CYBERSKALISKA | KAMI MELIHATMU</title>
     <style>
-        /* --- CSS CYBER-STYLISH --- */
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700;900&display=swap');
+
+        /* --- CSS CYBER-STYLISH & GAME VARS --- */
         :root {
+            /* Web Vars */
             --neon-blue: #00d4ff;
             --dark-bg: #030b16;
             --terminal-green: #00ff41;
             --glitch-red: #ff003c;
             --purple-team: #b000ff;
+
+            /* Game Vars */
+            --bg-dark: #020617; --panel-bg: rgba(15, 23, 42, 0.85);
+            --primary: #f43f5e; --primary-glow: #e11d48;
+            --secondary: #0ea5e9; --secondary-glow: #0284c7;
+            --accent: #fbbf24; --text-main: #f8fafc;
+            --text-muted: #94a3b8; --health: #10b981;
+            --grid-line: rgba(14, 165, 233, 0.08);
+            --p-color: #0ea5e9; --e-color: #f43f5e;
         }
 
         * {
@@ -29,7 +41,7 @@
             position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15;
         }
 
-        /* Scanline Overlay */
+        /* Scanline Overlay Web */
         body::before {
             content: " "; display: block; position: fixed;
             top: 0; left: 0; bottom: 0; right: 0;
@@ -61,7 +73,6 @@
 
         .logo { font-size: 1.8rem; font-weight: bold; color: var(--neon-blue); z-index: 20;}
         
-        /* Navigasi Instagram di Pojok Kanan */
         .nav-instagram { z-index: 20; }
         .nav-instagram a {
             color: white; text-decoration: none; font-size: 0.8rem;
@@ -95,23 +106,19 @@
             position: absolute; bottom: 0; left: 0; width: 100%; height: 25px;
             overflow: hidden; pointer-events: none; z-index: 10;
         }
-
         .cactus-static {
             position: absolute; bottom: 0; width: 14px; height: 18px;
             fill: var(--neon-blue); opacity: 0.7;
         }
-
         .dino-mover {
             position: absolute; bottom: 0; width: 20px; height: 20px;
             animation: runLeftAndJump 10s linear infinite;
         }
-
         .dino-svg { 
             width: 100%; height: 100%; fill: var(--terminal-green); 
             transform: scaleX(-1);
             animation: matrixGlitch 0.4s infinite;
         }
-        
         @keyframes matrixGlitch {
             0% { filter: drop-shadow(2px 0 0 var(--glitch-red)) drop-shadow(-2px 0 0 var(--neon-blue)); }
             25% { filter: drop-shadow(-2px 0 0 var(--glitch-red)) drop-shadow(2px 0 0 var(--neon-blue)); transform: scaleX(-1) skewX(5deg); }
@@ -120,7 +127,6 @@
             80% { transform: scaleX(-1) translate(0, 0); }
             100% { filter: drop-shadow(2px 0 0 var(--glitch-red)) drop-shadow(-2px 0 0 var(--neon-blue)); }
         }
-
         .dino-svg .leg-front { animation: legRun 0.15s linear infinite; }
         .dino-svg .leg-back { animation: legRun 0.15s linear infinite 0.075s; }
 
@@ -134,22 +140,17 @@
             68% { bottom: 0; }
             100% { right: 110%; bottom: 0; }
         }
-
         @keyframes legRun {
             0%, 49% { transform: translateY(0); }
             50%, 100% { transform: translateY(-2px); }
         }
 
         /* --- SISTEM PAGE SPA --- */
-        main {
-            width: 100%; min-height: 100vh; display: flex; flex-direction: column;
-        }
-
+        main { width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
         .page-view { 
             display: none; padding-top: 150px; padding-bottom: 60px;
             animation: fadeInPage 0.4s ease-in forwards; width: 100%; flex-grow: 1;
         }
-        
         #view-home { 
             flex-direction: column; justify-content: center; align-items: center; 
             text-align: center; padding-top: 0; min-height: 100vh;
@@ -178,11 +179,8 @@
             border-bottom: 1px solid var(--neon-blue); display: inline-block; width: 100%; padding-bottom: 8px;
         }
 
-        /* --- KARTU (GRID & LARGE) REVISI KECIL --- */
-        .grid-features {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; padding: 0 8%;
-        }
-
+        /* --- KARTU --- */
+        .grid-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; padding: 0 8%; }
         .card {
             background: rgba(0, 212, 255, 0.02); border: 1px solid rgba(0, 212, 255, 0.1);
             position: relative; overflow: hidden; transition: 0.3s;
@@ -194,40 +192,28 @@
         .card:hover { background: rgba(0, 212, 255, 0.05); }
 
         .card-grid { height: 180px; }
-        
-        .card-large {
-            margin: 25px 8% 0; padding: 20px; height: auto;
-            border-color: rgba(0, 212, 255, 0.3);
-        }
+        .card-large { margin: 25px 8% 0; padding: 20px; height: auto; border-color: rgba(0, 212, 255, 0.3); }
 
         .card-content { padding: 15px; transition: filter 0.4s ease; height: 100%; }
         .card-large .card-content { padding: 0; }
         
         .card-content h3 { font-size: 1rem; margin-bottom: 8px; }
         .card-large .card-content h3 { font-size: 1.3rem; margin-bottom: 12px; }
-        
         .card-content p { font-size: 0.8rem; line-height: 1.4; color: #a1aabf; }
         .card-large .card-content p { font-size: 0.9rem; color: #c0c8df; line-height: 1.5;}
 
-        /* --- INTERAKSI BLUR HANYA UNTUK KARTU YANG PUNYA OVERLAY --- */
         .card-interactive .card-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(3, 11, 22, 0.88); display: flex; justify-content: center; align-items: center;
             opacity: 0; transition: opacity 0.4s ease; z-index: 10;
         }
 
-        /* Hover efek hanya berjalan kalau kursor mendeteksi mouse (desktop) */
         @media (hover: hover) and (pointer: fine) {
             .card-interactive:hover .card-content { filter: blur(4px); }
             .card-interactive:hover .card-overlay { opacity: 1; }
         }
 
-        /* --- WARNA TOMBOL DINAMIS DI OVERLAY --- */
-        .btn-small {
-            padding: 8px 16px; background: transparent; cursor: pointer; font-weight: bold; 
-            transition: 0.3s; font-size: 0.8rem; border: 1px solid;
-        }
-        
+        .btn-small { padding: 8px 16px; background: transparent; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 0.8rem; border: 1px solid; }
         .btn-purple { color: var(--purple-team); border-color: var(--purple-team); }
         .btn-purple:hover { background: var(--purple-team); color: var(--dark-bg); box-shadow: 0 0 12px var(--purple-team); }
         .btn-blue { color: var(--neon-blue); border-color: var(--neon-blue); }
@@ -240,22 +226,199 @@
             font-size: 0.75rem; border-top: 1px solid var(--neon-blue); width: 100%; margin-top: auto;
         }
 
-        /* --- MURNI OPTIMASI MOBILE SAJA TANPA MERUBAH POSISI ABSOLUTE MU --- */
         @media screen and (max-width: 768px) {
             nav { padding: 15px 5%; }
             .logo { font-size: 1.3rem; }
-            .nav-controls { left: 5%; top: 95px; } /* Tetap di kiri atas, padding disesuaikan sedikit */
-            
-            .grid-features { grid-template-columns: 1fr; padding: 0 5%; } /* Grid jadi ke bawah biar gak gepeng */
+            .nav-controls { left: 5%; top: 95px; }
+            .grid-features { grid-template-columns: 1fr; padding: 0 5%; }
             .card-large { margin: 25px 5% 0; }
-            
-            /* Di HP, tombol decrypt langsung dimunculin di bawah biar gampang dipencet */
             .card-interactive .card-overlay {
                 opacity: 1; background: linear-gradient(transparent, rgba(3, 11, 22, 0.95));
                 align-items: flex-end; padding-bottom: 10px;
             }
             .card-interactive .card-content { filter: none !important; }
         }
+
+        /* ========================================================= */
+        /* --- SCOPED GAME CSS --- */
+        /* ========================================================= */
+        #game-wrapper, #game-wrapper * { 
+            font-family: 'Rajdhani', sans-serif; user-select: none; box-sizing: border-box; 
+        }
+
+        #game-wrapper::after {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.6;
+        }
+
+        #game-engine {
+            flex: 1; width: 100%; height: 100%; display: flex; flex-direction: column; position: relative;
+            background: var(--panel-bg); overflow: hidden; box-shadow: inset 0 0 50px rgba(14, 165, 233, 0.1);
+        }
+
+        /* --- SELECTION SCREEN --- */
+        #selection-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.98); z-index: 50; display: flex; flex-direction: column; 
+            padding: 20px; transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+        .screen-header {
+            text-align: center; font-size: 2.5rem; font-weight: 900; color: var(--text-main);
+            text-shadow: 0 0 10px var(--secondary), 2px 2px 0px var(--primary); margin-bottom: 20px; letter-spacing: 4px; flex-shrink: 0;
+        }
+        .roster-container { 
+            display: flex; justify-content: center; gap: 20px; flex: 1; overflow: hidden; max-width: 1200px; margin: 0 auto; width: 100%;
+        }
+        .roster-side {
+            flex: 1; background: rgba(15, 23, 42, 0.6); border-top: 4px solid var(--secondary);
+            border-bottom: 4px solid var(--secondary); padding: 15px; display: flex; flex-direction: column;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5); overflow: hidden;
+        }
+        .roster-side:nth-child(3) { border-color: var(--primary); }
+        .roster-title { text-align: center; font-weight: 900; font-size: 1.2rem; margin-bottom: 10px; color: var(--text-main); letter-spacing: 2px; flex-shrink: 0; }
+        
+        .char-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+            gap: 10px; overflow-y: auto; padding-right: 10px; flex: 1; align-content: flex-start;
+        }
+        .char-grid::-webkit-scrollbar { width: 5px; }
+        .char-grid::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 3px; }
+
+        .char-card {
+            background: linear-gradient(135deg, rgba(30,41,59,0.8) 0%, rgba(15,23,42,0.9) 100%); 
+            border: 1px solid #334155; padding: 10px; text-align: center; cursor: pointer; 
+            transition: all 0.2s; position: relative; overflow: hidden;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .char-card:hover { transform: translateY(-3px); border-color: var(--text-main); background: #1e293b; }
+        .char-card.selected-p { border-color: var(--secondary); background: rgba(14, 165, 233, 0.2); box-shadow: inset 0 0 15px rgba(14, 165, 233, 0.4); }
+        .char-card.selected-e { border-color: var(--primary); background: rgba(244, 63, 94, 0.2); box-shadow: inset 0 0 15px rgba(244, 63, 94, 0.4); }
+
+        .mini-avatar-p { width: 45px; height: 45px; background: var(--color); border: 2px solid var(--secondary); border-radius: 8px; position: relative; margin-bottom: 8px; box-shadow: 0 0 10px rgba(14, 165, 233, 0.4); }
+        .mini-avatar-p::after { content: ''; position: absolute; top: 12px; left: 6px; width: 28px; height: 10px; background: var(--secondary); border-radius: 3px; box-shadow: 0 0 5px #fff; }
+        .mini-avatar-e { width: 45px; height: 45px; background: #0f172a; border: 2px solid var(--color); border-radius: 6px; position: relative; margin-bottom: 8px; box-shadow: 0 0 10px rgba(244, 63, 94, 0.4); clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 100%, 0 100%, 0% 20%); }
+        .mini-avatar-e::after { content: ''; position: absolute; top: 15px; left: 8px; width: 25px; height: 6px; border-top: 3px solid var(--color); border-bottom: 2px solid var(--color); border-radius: 50%; }
+
+        .char-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 2px; }
+        .char-role { font-size: 0.75rem; color: var(--accent); font-weight: 600; text-transform: uppercase; }
+        .vs-badge { align-self: center; font-size: 4rem; font-weight: 900; color: transparent; -webkit-text-stroke: 2px #fff; text-shadow: 0 0 20px var(--primary), 0 0 10px var(--secondary); font-style: italic; margin: 0 10px; flex-shrink: 0; }
+
+        #btn-start-fight {
+            margin: 20px auto 0; padding: 15px 40px; font-size: 1.5rem; background: linear-gradient(90deg, var(--primary-glow), var(--primary));
+            color: white; border: none; font-weight: 900; letter-spacing: 5px; cursor: pointer; flex-shrink: 0;
+            box-shadow: 0 10px 20px rgba(244, 63, 94, 0.4); transition: 0.3s;
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+        }
+        #btn-start-fight:hover:not(:disabled) { transform: scale(1.02); filter: brightness(1.2); }
+        #btn-start-fight:disabled { background: #1e293b; color: #475569; cursor: not-allowed; box-shadow: none; }
+
+        /* --- MAIN ARENA --- */
+        .arena {
+            flex: 1; position: relative; display: flex; justify-content: space-around; 
+            align-items: flex-end; padding: 20px 5vw 40px;
+            background: radial-gradient(ellipse at bottom, rgba(30,41,59,0.5) 0%, transparent 100%);
+            box-shadow: inset 0 -40px 50px rgba(0,0,0,0.8); overflow: hidden;
+        }
+        .entity { display: flex; flex-direction: column; align-items: center; width: 280px; z-index: 10; }
+        .hud {
+            width: 100%; background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.95)); padding: 15px; 
+            border-left: 4px solid; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+        }
+        #player .hud { border-color: var(--secondary); }
+        #enemy .hud { border-color: var(--primary); }
+
+        .hud h3 { font-size: 1.4rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; text-align: left; font-weight: 900; }
+        .status-indicators { display: flex; gap: 5px; justify-content: flex-start; margin-bottom: 8px; height: 20px; }
+        .status-icon { font-size: 0.75rem; padding: 2px 6px; font-weight: bold; letter-spacing: 1px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); text-transform: uppercase; }
+        .st-stun { background: var(--accent); color: #000; }
+        .st-dot { background: var(--primary); color: #fff; }
+        .st-def { background: var(--secondary); color: #fff; }
+
+        .bar-container { width: 100%; height: 16px; background: #020617; margin-bottom: 6px; border: 1px solid #1e293b; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); transform: skewX(-15deg); }
+        .bar { height: 100%; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hp-bar { background: linear-gradient(90deg, #059669, var(--health)); box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+        .ap-bar { background: linear-gradient(90deg, #0284c7, var(--secondary)); box-shadow: 0 0 10px rgba(14, 165, 233, 0.5); }
+        .enemy-hp { background: linear-gradient(90deg, #be123c, var(--primary)); box-shadow: 0 0 10px rgba(244, 63, 94, 0.5); }
+        .stats-text { display: flex; justify-content: space-between; font-size: 0.95rem; color: var(--text-main); font-weight: bold; transform: skewX(-15deg); padding: 0 5px; }
+
+        .sprite { position: relative; transition: transform 0.2s; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.8)); }
+        .agent-body { width: 90px; height: 140px; background: linear-gradient(135deg, #1e293b 0%, #020617 100%); border: 2px solid var(--secondary); border-radius: 10px 10px 0 0; box-shadow: inset 0 0 20px rgba(14, 165, 233, 0.4); position: relative; }
+        .agent-body::before { content: ''; position: absolute; top: 15px; left: -15px; width: 116px; height: 35px; background: #0f172a; border: 2px solid var(--secondary); border-radius: 8px; clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%); }
+        .agent-head { width: 55px; height: 55px; background: #020617; border: 2px solid var(--secondary); border-radius: 50%; position: absolute; top: -70px; left: 15px; box-shadow: 0 0 15px rgba(14, 165, 233, 0.5); overflow: hidden; }
+        .agent-head::after { content: ''; position: absolute; top: 16px; left: 7px; width: 36px; height: 12px; background: var(--secondary); border-radius: 4px; box-shadow: 0 0 15px #fff; }
+
+        .corruptor-body { width: 120px; height: 160px; background: linear-gradient(135deg, #334155 0%, #020617 100%); border: 2px solid var(--primary); border-radius: 20px 20px 0 0; box-shadow: inset 0 0 30px rgba(244, 63, 94, 0.4); position: relative; }
+        .corruptor-body::before { content: ''; position: absolute; top: 40px; left: 35px; width: 45px; height: 45px; background: radial-gradient(circle, var(--accent) 0%, transparent 70%); box-shadow: 0 0 25px var(--accent); animation: pulse-core 2s infinite alternate; }
+        .corruptor-head { width: 70px; height: 70px; background: #0f172a; border: 2px solid var(--primary); border-radius: 10px; position: absolute; top: -85px; left: 23px; box-shadow: 0 0 15px rgba(244, 63, 94, 0.5); clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 100%, 0 100%, 0% 20%); }
+        .corruptor-head::after { content: ''; position: absolute; top: 25px; left: 10px; width: 46px; height: 8px; background: transparent; border-top: 4px solid var(--primary); border-bottom: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); border-radius: 50%; }
+
+        /* --- DASHBOARD --- */
+        .dashboard { height: 280px; flex-shrink: 0; background: #020617; border-top: 4px solid var(--secondary); display: flex; box-shadow: 0 -15px 30px rgba(0,0,0,0.9); z-index: 20; position: relative; }
+        .menu-nav { width: 250px; flex-shrink: 0; background: #0f172a; padding: 20px; display: flex; flex-direction: column; gap: 15px; border-right: 2px solid #1e293b; }
+        .menu-btn { background: transparent; color: #fff; border: 2px solid transparent; border-left: 4px solid var(--secondary); padding: 15px; font-size: 1.2rem; font-weight: 900; letter-spacing: 2px; cursor: pointer; text-align: left; transition: 0.2s; position: relative; }
+        .menu-btn::before { content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%; background: linear-gradient(90deg, rgba(14, 165, 233, 0.2), transparent); transition: 0.3s; z-index: -1; }
+        .menu-btn:hover:not(:disabled)::before { width: 100%; }
+        .menu-btn:hover:not(:disabled) { padding-left: 25px; border-color: var(--secondary); text-shadow: 0 0 10px var(--secondary); }
+        .menu-btn.active { background: rgba(14, 165, 233, 0.1); border-color: var(--secondary); }
+        .menu-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .action-panel { flex: 1; padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: radial-gradient(circle at center, #0f172a, #020617); position: relative; align-content: flex-start; overflow-y: auto; }
+        .action-panel::-webkit-scrollbar { width: 5px; }
+        .action-panel::-webkit-scrollbar-thumb { background: #334155; }
+
+        .dyn-btn { background: linear-gradient(135deg, rgba(30,41,59,0.6) 0%, rgba(15,23,42,0.8) 100%); color: var(--text-main); border: 1px solid #334155; border-radius: 4px; padding: 15px; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; box-shadow: 0 5px 10px rgba(0,0,0,0.5); position: relative; overflow: hidden; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); }
+        .dyn-btn::before { content: ''; position: absolute; top: 0; right: 0; width: 40px; height: 100%; background: rgba(255,255,255,0.02); transform: skewX(-20deg); transition: 0.3s; }
+        .dyn-btn:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--text-main); box-shadow: 0 8px 15px rgba(0,0,0,0.8); }
+        .dyn-btn:hover:not(:disabled)::before { width: 100%; background: rgba(255,255,255,0.05); }
+        .dyn-btn:active:not(:disabled) { transform: translateY(0); }
+        .dyn-btn:disabled { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; }
+
+        .btn-title { font-size: 1.1rem; font-weight: 900; margin-bottom: 5px; letter-spacing: 1px; }
+        .btn-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.3; font-weight: 600; }
+        .btn-cost { position: absolute; top: 10px; right: 10px; font-size: 1rem; font-weight: 900; background: rgba(0,0,0,0.8); padding: 2px 8px; border-radius: 2px; }
+
+        .type-atk { border-bottom: 2px solid var(--primary); } .type-atk .btn-cost { color: #fca5a5; }
+        .type-heavy { border-bottom: 2px solid var(--accent); } .type-heavy .btn-cost { color: #fcd34d; }
+        .type-def { border-bottom: 2px solid var(--secondary); } .type-def .btn-cost { color: #93c5fd; }
+        .type-tech { border-bottom: 2px solid #a855f7; } .type-tech .btn-cost { color: #d8b4fe; }
+        .type-item { border-bottom: 2px solid var(--health); } .type-item .btn-cost { color: #86efac; }
+
+        .logger { width: 300px; flex-shrink: 0; background: #020617; border-left: 2px solid #1e293b; padding: 15px; font-family: 'Consolas', monospace; font-size: 0.85rem; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; box-shadow: inset 10px 0 20px rgba(0,0,0,0.6); }
+        .logger::-webkit-scrollbar { width: 4px; }
+        .logger::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 2px; }
+
+        .log-item { padding: 10px; background: #0f172a; border-left: 3px solid #334155; animation: slideIn 0.3s ease-out; line-height: 1.4; color: #e2e8f0; font-weight: bold; border-radius: 0 4px 4px 0; }
+        .log-player { border-left-color: var(--secondary); color: #bae6fd; background: rgba(14, 165, 233, 0.1); }
+        .log-enemy { border-left-color: var(--primary); color: #fecdd3; background: rgba(244, 63, 94, 0.1); }
+        .log-critical { border-left-color: var(--accent); font-weight: 900; color: #000; background: var(--accent); text-transform: uppercase; }
+        .log-status { border-left-color: #a855f7; font-style: italic; color: #e9d5ff; }
+
+        /* VFX & Animations */
+        .floater { position: absolute; font-size: 3rem; font-weight: 900; pointer-events: none; animation: floatUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 10px 20px rgba(0,0,0,0.9); z-index: 100; }
+        #screen-flash { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 900; opacity: 0; pointer-events: none; }
+        .flash-anim { animation: flash 0.5s ease-out; }
+
+        @keyframes pulse-core { 0% { opacity: 0.5; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1.1); } }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.5); } 20% { transform: translateY(-40px) scale(1.3); } 100% { opacity: 0; transform: translateY(-100px) scale(1); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes flash { 0% { opacity: 0.8; } 100% { opacity: 0; } }
+        @keyframes atk-dash { 0% { transform: translateX(0) skewX(0); } 40% { transform: translateX(100px) skewX(-20deg); filter: brightness(1.5); } 100% { transform: translateX(0) skewX(0); } }
+        @keyframes atk-dash-enemy { 0% { transform: translateX(0) skewX(0); } 40% { transform: translateX(-100px) skewX(20deg); filter: brightness(1.5); } 100% { transform: translateX(0) skewX(0); } }
+        @keyframes hit-shake { 0%, 100% { transform: translate(0, 0); filter: brightness(1); } 20% { transform: translate(-15px, 10px) rotate(-8deg); filter: brightness(2) drop-shadow(0 0 30px red); } 40% { transform: translate(15px, -10px) rotate(8deg); } 60% { transform: translate(-10px, 10px) rotate(-4deg); } 80% { transform: translate(10px, -10px) rotate(4deg); } }
+        @keyframes block-shake { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-8px); filter: brightness(1.8) drop-shadow(0 0 20px var(--secondary)); } }
+        @keyframes screen-shake { 0%, 100% { transform: translate(0,0); } 20% { transform: translate(-10px, 10px); } 40% { transform: translate(10px, -10px); } 60% { transform: translate(-10px, -10px); } 80% { transform: translate(10px, 10px); } }
+
+        .anim-atk { animation: atk-dash 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .anim-atk-enemy { animation: atk-dash-enemy 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .anim-hit { animation: hit-shake 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .anim-block { animation: block-shake 0.3s ease; }
+        .screen-shake { animation: screen-shake 0.4s cubic-bezier(0.36, 0, 0.66, -0.56); }
+
     </style>
 </head>
 <body>
@@ -264,11 +427,9 @@
 
     <nav>
         <div class="logo glitch" data-text="CYBERSKALISKA">CYBER SMK YAPALIS</div>
-        
         <div class="nav-instagram">
             <a href="https://www.instagram.com/cybersmkyapaliskrian" target="_blank">@cybersmkyapaliskrian</a>
         </div>
-        
         <div class="dino-track">
             <div class="cactus-static" style="right: 33%;">
                 <svg viewBox="0 0 14 18" xmlns="http://www.w3.org/2000/svg">
@@ -346,6 +507,14 @@
                 </div>
             </div>
 
+            <div class="card card-large" style="border-top-color: var(--glitch-red); border-left-color: var(--glitch-red);">
+                <div class="card-content">
+                    <h3 style="color: var(--glitch-red);">>_ TACTICAL SIMULATION: OPERASI INTEGRITAS</h3>
+                    <p>Modul simulasi tempur RPG untuk melatih insting ofensif dan defensif tim secara real-time. Uji strategimu di medan tempur digital.</p>
+                    <button class="btn-main" style="margin-top: 15px; font-size: 0.9rem; padding: 10px 20px; background: var(--glitch-red);" onclick="openGame()">INITIALIZE PROTOCOL</button>
+                </div>
+            </div>
+
             <div class="card card-large">
                 <div class="card-content">
                     <h3 style="color: var(--neon-blue);">>_ CORE DIRECTIVE</h3>
@@ -356,7 +525,6 @@
 
         <section id="view-cap-darkowl" class="page-view">
             <h2 class="section-title" style="color: var(--purple-team); border-color: var(--purple-team);">KOMPETENSI PURPLE TEAM</h2>
-            
             <div class="grid-features">
                 <div class="card card-grid">
                     <div class="card-content">
@@ -371,7 +539,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card card-large" style="border-top-color: var(--purple-team); border-left-color: var(--purple-team);">
                 <div class="card-content">
                     <h3 style="color: var(--purple-team);">>_ PURPLE DOCTRINE</h3>
@@ -382,7 +549,6 @@
 
         <section id="view-cap-gargant" class="page-view">
             <h2 class="section-title">KOMPETENSI BLUE TEAM</h2>
-            
             <div class="grid-features">
                 <div class="card card-grid">
                     <div class="card-content">
@@ -397,7 +563,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card card-large">
                 <div class="card-content">
                     <h3 style="color: var(--neon-blue);">>_ BLUE PROTOCOL</h3>
@@ -408,7 +573,6 @@
 
         <section id="view-cap-lumprat" class="page-view">
             <h2 class="section-title" style="color: var(--terminal-green); border-color: var(--terminal-green);">KOMPETENSI CODERS</h2>
-            
             <div class="grid-features">
                 <div class="card card-grid">
                     <div class="card-content">
@@ -423,7 +587,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card card-large" style="border-top-color: var(--terminal-green); border-left-color: var(--terminal-green);">
                 <div class="card-content">
                     <h3 style="color: var(--terminal-green);">>_ CODER INITIATIVE</h3>
@@ -438,8 +601,75 @@
         <p>        SMK Yapalis Krian, Sidoarjo, Jatim.</p>
     </footer>
 
+    <div id="game-wrapper" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999999; background-color: var(--bg-dark); color: var(--text-main); flex-direction: column; overflow: hidden; background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px), radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%); background-size: 40px 40px, 40px 40px, 100% 100%;">
+        
+        <button onclick="closeGame()" style="position: absolute; top: 20px; right: 20px; z-index: 1000; background: rgba(2, 6, 23, 0.9); color: var(--primary); border: 2px solid var(--primary); padding: 10px 20px; font-weight: 900; cursor: pointer; letter-spacing: 2px; font-family: 'Rajdhani', sans-serif; transition: 0.3s; box-shadow: 0 0 10px rgba(244, 63, 94, 0.5); clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);">[X] TERMINATE SIMULATION</button>
+
+        <div id="game-engine">
+            <div id="screen-flash"></div> <div id="selection-screen">
+                <div class="screen-header">OPERASI INTEGRITAS // SELEKSI PROTOKOL</div>
+                
+                <div class="roster-container">
+                    <div class="roster-side">
+                        <div class="roster-title">DIVISI PENINDAKAN</div>
+                        <div class="char-grid" id="grid-player"></div>
+                    </div>
+                    <div class="vs-badge">VS</div>
+                    <div class="roster-side">
+                        <div class="roster-title">TARGET OPERASI</div>
+                        <div class="char-grid" id="grid-enemy"></div>
+                    </div>
+                </div>
+
+                <button id="btn-start-fight" disabled>INISIASI PENYERGAPAN</button>
+            </div>
+
+            <div class="arena" id="arena">
+                <div class="entity" id="player">
+                    <div class="hud">
+                        <h3 id="p-name-hud">AGEN</h3>
+                        <div class="status-indicators" id="p-status"></div>
+                        <div class="bar-container"><div class="bar hp-bar" id="p-hp-bar"></div></div>
+                        <div class="stats-text"><span id="p-hp-text">0/0 HP</span></div>
+                        <div class="bar-container mt-2"><div class="bar ap-bar" id="p-ap-bar"></div></div>
+                        <div class="stats-text"><span id="p-ap-text">0/0 AP</span></div>
+                    </div>
+                    <div class="sprite" id="p-sprite">
+                        <div class="agent-body"><div class="agent-head"></div></div>
+                    </div>
+                </div>
+
+                <div class="entity" id="enemy">
+                    <div class="hud">
+                        <h3 id="e-name-hud">TARGET</h3>
+                        <div class="status-indicators" id="e-status"></div>
+                        <div class="bar-container"><div class="bar enemy-hp" id="e-hp-bar"></div></div>
+                        <div class="stats-text"><span id="e-hp-text">0/0 HP</span></div>
+                        <div class="bar-container mt-2"><div class="bar ap-bar" id="e-ap-bar"></div></div>
+                        <div class="stats-text"><span id="e-ap-text">0/0 AP</span></div>
+                    </div>
+                    <div class="sprite" id="e-sprite">
+                        <div class="corruptor-body"><div class="corruptor-head"></div><div class="corruptor-gold"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard">
+                <div class="menu-nav">
+                    <button class="menu-btn" id="nav-fight" onclick="switchTab('fight')">BATTLE SKILLS</button>
+                    <button class="menu-btn" id="nav-item" onclick="switchTab('item')">INVENTORY</button>
+                    <button class="menu-btn" id="nav-defend" onclick="executeDefend()">TACTICAL DEFEND</button>
+                </div>
+                <div class="action-panel" id="action-panel"></div>
+                <div class="logger" id="log-container">
+                    <div class="log-item">SYSTEM_SECURE: Menunggu otorisasi operatif...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- Optimasi Matrix Canvas (menggunakan requestAnimationFrame biar gak membebani CPU/HP) ---
+        // --- WEB SCRIPTS (Matrix & SPA Routing) ---
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
         
@@ -463,7 +693,7 @@
         });
 
         let lastDrawTime = 0;
-        const fps = 30; // Limit FPS untuk ngurangin beban render HP
+        const fps = 30;
         const interval = 1000 / fps;
 
         function drawMatrix(timestamp) {
@@ -487,30 +717,17 @@
         }
         requestAnimationFrame(drawMatrix);
 
-        // --- SISTEM ROUTING SPA ---
         let pageHistory = ['view-home'];
         let currentIndex = 0;
 
         function renderPage() {
-            document.querySelectorAll('.page-view').forEach(el => {
-                el.style.display = 'none';
-            });
-            
+            document.querySelectorAll('.page-view').forEach(el => el.style.display = 'none');
             const activePageId = pageHistory[currentIndex];
             const activeEl = document.getElementById(activePageId);
-            if(activePageId === 'view-home') {
-                activeEl.style.display = 'flex';
-            } else {
-                activeEl.style.display = 'block';
-            }
+            activeEl.style.display = activePageId === 'view-home' ? 'flex' : 'block';
 
-            const btnBack = document.getElementById('btn-back');
-            const btnForward = document.getElementById('btn-forward');
-
-            btnBack.disabled = (currentIndex === 0);
-            btnForward.disabled = (currentIndex === pageHistory.length - 1);
-            
-            // Otomatis scroll ke atas pas pindah halaman
+            document.getElementById('btn-back').disabled = (currentIndex === 0);
+            document.getElementById('btn-forward').disabled = (currentIndex === pageHistory.length - 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -530,18 +747,344 @@
         }
 
         function goBack() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderPage();
-            }
+            if (currentIndex > 0) { currentIndex--; renderPage(); }
         }
 
         function goForward() {
-            if (currentIndex < pageHistory.length - 1) {
-                currentIndex++;
-                renderPage();
+            if (currentIndex < pageHistory.length - 1) { currentIndex++; renderPage(); }
+        }
+
+        // --- GAME INTEGRATION SCRIPTS ---
+        function openGame() {
+            document.getElementById('game-wrapper').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Kunci scroll di web
+        }
+
+        function closeGame() {
+            document.getElementById('game-wrapper').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Kembalikan scroll
+        }
+
+        // --- GAME LOGIC (OPERASI INTEGRITAS) ---
+        const rosters = {
+            player: [
+                { id: 'p1', name: "Agen Spesialis", role: "Balanced", color: "#0ea5e9", hp: 180, maxHp: 180, ap: 60, maxAp: 100, apRegen: 25,
+                  skills: [ { name: "Tembakan Presisi", type: "atk", cost: -15, dmg: 25, eff: null, desc: "Damage stabil. Akurasi 100%." },
+                            { name: "Operasi OTT", type: "heavy", cost: -50, dmg: 70, eff: null, desc: "Damage besar, peluang meleset." },
+                            { name: "Interogasi", type: "tech", cost: -30, dmg: 10, eff: "drain", desc: "Curi 25 AP target." },
+                            { name: "Gas Air Mata", type: "tech", cost: -40, dmg: 5, eff: "stun", desc: "Lumpuhkan 1 giliran." } ] },
+                { id: 'p2', name: "Brimob Taktis", role: "Tank / Brute", color: "#f43f5e", hp: 280, maxHp: 280, ap: 40, maxAp: 80, apRegen: 15,
+                  skills: [ { name: "Battering Ram", type: "heavy", cost: -25, dmg: 45, eff: null, desc: "Damage fisik tinggi konstan." },
+                            { name: "Shield Bash", type: "def", cost: -20, dmg: 15, eff: "defend_heavy", desc: "Tahan 90% DMG turn ini." },
+                            { name: "Suppressive Fire", type: "atk", cost: -35, dmg: 30, eff: "dot", desc: "Tembakan beruntun + DoT." },
+                            { name: "Adrenaline Rush", type: "tech", cost: +40, dmg: -20, eff: null, desc: "Korbankan 20 HP, dapat 40 AP." } ] },
+                { id: 'p3', name: "Auditor Cyber", role: "Control / Heal", color: "#3b82f6", hp: 140, maxHp: 140, ap: 80, maxAp: 150, apRegen: 35,
+                  skills: [ { name: "DDOS Attack", type: "atk", cost: -20, dmg: 20, eff: "dot", desc: "Infeksi sistem. DoT 3 Turn." },
+                            { name: "Freeze Asset", type: "tech", cost: -60, dmg: 0, eff: "stun", desc: "Bekukan aset musuh (Stun)." },
+                            { name: "Data Siphon", type: "tech", cost: -10, dmg: 15, eff: "drain_heavy", desc: "Curi 40 AP Musuh." },
+                            { name: "System Restore", type: "tech", cost: -70, dmg: -80, eff: "heal", desc: "Pulihkan 80 HP." } ] },
+                { id: 'p4', name: "Intelijen Gelap", role: "Assassin", color: "#a855f7", hp: 150, maxHp: 150, ap: 50, maxAp: 100, apRegen: 30,
+                  skills: [ { name: "Sniper Shot", type: "heavy", cost: -60, dmg: 110, eff: null, desc: "Akurasi 60%, Sangat Mematikan." },
+                            { name: "Poison Dart", type: "tech", cost: -25, dmg: 10, eff: "dot_heavy", desc: "DoT Sangat Kuat." },
+                            { name: "Shadow Strike", type: "atk", cost: -15, dmg: 30, eff: null, desc: "Serangan senyap cepat." },
+                            { name: "Vanish", type: "def", cost: -40, dmg: 0, eff: "evade", desc: "Hindari serangan 100%." } ] },
+                { id: 'p5', name: "Jaksa Eksekutor", role: "Nuker", color: "#fbbf24", hp: 200, maxHp: 200, ap: 40, maxAp: 100, apRegen: 20,
+                  skills: [ { name: "Surat Dakwaan", type: "atk", cost: -20, dmg: 25, eff: null, desc: "Damage konstan di meja hijau." },
+                            { name: "Penyitaan", type: "tech", cost: -35, dmg: 20, eff: "drain", desc: "Sita 20 AP." },
+                            { name: "Hukum Mati", type: "heavy", cost: -90, dmg: 130, eff: null, desc: "Eksekusi fatal. Butuh 90 AP." },
+                            { name: "Banding Ulang", type: "def", cost: +50, dmg: 0, eff: "defend", desc: "Pulih AP masif, tahan DMG." } ] }
+            ],
+            enemy: [
+                { id: 'e1', name: "Koruptor Kakap", role: "Tank / Healer", color: "#fbbf24", hp: 450, maxHp: 450, ap: 50, maxAp: 100, apRegen: 20, ai: 'survival' },
+                { id: 'e2', name: "Mafia Hukum", role: "Control / Drain", color: "#a855f7", hp: 300, maxHp: 300, ap: 80, maxAp: 150, apRegen: 35, ai: 'drainer' },
+                { id: 'e3', name: "Oligarki Tambang", role: "Brute", color: "#10b981", hp: 550, maxHp: 550, ap: 20, maxAp: 80, apRegen: 15, ai: 'berserk' },
+                { id: 'e4', name: "Hacker Sindikat", role: "Evasion / DoT", color: "#06b6d4", hp: 250, maxHp: 250, ap: 70, maxAp: 120, apRegen: 30, ai: 'technical' },
+                { id: 'e5', name: "Jenderal Beking", role: "Heavy Damage", color: "#ef4444", hp: 400, maxHp: 400, ap: 40, maxAp: 100, apRegen: 25, ai: 'tactical' }
+            ],
+            items: [
+                { id: 'medkit', name: "First Aid Kit", type: "item", heal: 100, ap: 0, desc: "Pulihkan 100 HP.", count: 2 },
+                { id: 'kopi', name: "Kopi Hitam", type: "item", heal: 0, ap: 50, desc: "Pulihkan 50 AP.", count: 2 },
+                { id: 'bukti', name: "Hard Drive Bukti", type: "item", heal: 80, ap: 80, desc: "Pulihkan 80 HP & 80 AP.", count: 1 }
+            ]
+        };
+
+        let state = { turn: 'player', player: null, enemy: null, inventory: [], pStatus: { def: 0, stun: 0, dot: 0, dotDmg: 0 }, eStatus: { def: 0, stun: 0, dot: 0, dotDmg: 0 } };
+        let selP = null, selE = null;
+
+        const DOM = {
+            phpT: document.getElementById('p-hp-text'), phpB: document.getElementById('p-hp-bar'), papT: document.getElementById('p-ap-text'), papB: document.getElementById('p-ap-bar'),
+            ehpT: document.getElementById('e-hp-text'), ehpB: document.getElementById('e-hp-bar'), eapT: document.getElementById('e-ap-text'), eapB: document.getElementById('e-ap-bar'),
+            pSpr: document.getElementById('p-sprite'), eSpr: document.getElementById('e-sprite'), log: document.getElementById('log-container'), panel: document.getElementById('action-panel')
+        };
+
+        function initSelection() {
+            const gP = document.getElementById('grid-player'); const gE = document.getElementById('grid-enemy'); const btn = document.getElementById('btn-start-fight');
+            rosters.player.forEach((c, i) => {
+                let d = document.createElement('div'); d.className = 'char-card'; 
+                d.innerHTML = `<div class="mini-avatar-p" style="--color:${c.color}"></div><div class="char-name">${c.name}</div><div class="char-role">${c.role}</div>`;
+                d.onclick = () => { document.querySelectorAll('#grid-player .char-card').forEach(e => e.classList.remove('selected-p')); d.classList.add('selected-p'); selP = i; btn.disabled = (selP===null || selE===null); }; gP.appendChild(d);
+            });
+            rosters.enemy.forEach((c, i) => {
+                let d = document.createElement('div'); d.className = 'char-card'; 
+                d.innerHTML = `<div class="mini-avatar-e" style="--color:${c.color}"></div><div class="char-name">${c.name}</div><div class="char-role">${c.role}</div>`;
+                d.onclick = () => { document.querySelectorAll('#grid-enemy .char-card').forEach(e => e.classList.remove('selected-e')); d.classList.add('selected-e'); selE = i; btn.disabled = (selP===null || selE===null); }; gE.appendChild(d);
+            });
+            btn.onclick = () => {
+                document.getElementById('selection-screen').style.transform = 'translateY(-100%) scale(1.1)'; document.getElementById('selection-screen').style.opacity = '0';
+                setTimeout(() => document.getElementById('selection-screen').style.display = 'none', 600);
+                
+                state.player = JSON.parse(JSON.stringify(rosters.player[selP])); state.enemy = JSON.parse(JSON.stringify(rosters.enemy[selE])); state.inventory = JSON.parse(JSON.stringify(rosters.items));
+                
+                document.documentElement.style.setProperty('--p-color', state.player.color); document.documentElement.style.setProperty('--e-color', state.enemy.color);
+                
+                document.getElementById('p-name-hud').innerText = state.player.name; document.getElementById('e-name-hud').innerText = state.enemy.name;
+                updateHUD(); switchTab('main'); logEvent(`[LINK SECURED] Target: ${state.enemy.name}. Good luck, Agent.`, 'system');
+            };
+        }
+
+        function switchTab(tab) {
+            if(state.turn !== 'player') return;
+            DOM.panel.innerHTML = '';
+            document.querySelectorAll('.menu-btn').forEach(b => { b.disabled = false; b.classList.remove('active'); });
+
+            if(tab === 'main') {
+                DOM.panel.innerHTML = `<div style="grid-column: span 2; display:flex; align-items:center; justify-content:center; color: var(--text-muted); font-size: 1.5rem; font-style: italic; letter-spacing: 2px;">MENUNGGU INPUT TAKTIS...</div>`;
+            } 
+            else if(tab === 'fight') {
+                document.getElementById('nav-fight').classList.add('active');
+                state.player.skills.forEach((sk, i) => {
+                    let b = document.createElement('button'); b.className = `dyn-btn type-${sk.type}`;
+                    let disabled = (sk.cost < 0 && state.player.ap < Math.abs(sk.cost)) ? 'disabled' : '';
+                    b.innerHTML = `<div class="btn-title">${sk.name}</div><div class="btn-desc">${sk.desc}</div><div class="btn-cost">${sk.cost>0?'+'+sk.cost:sk.cost} AP</div>`;
+                    if(!disabled) b.onclick = () => execSkill(i); else b.disabled = true;
+                    DOM.panel.appendChild(b);
+                });
+            }
+            else if(tab === 'item') {
+                document.getElementById('nav-item').classList.add('active');
+                state.inventory.forEach((it, i) => {
+                    let b = document.createElement('button'); b.className = `dyn-btn type-item`;
+                    if(it.count <= 0) b.disabled = true;
+                    b.innerHTML = `<div class="btn-title">${it.name} <span style="color:#fbbf24">(x${it.count})</span></div><div class="btn-desc">${it.desc}</div>`;
+                    if(it.count > 0) b.onclick = () => execItem(i);
+                    DOM.panel.appendChild(b);
+                });
             }
         }
+
+        function updateHUD() {
+            DOM.phpT.innerText = `${Math.floor(state.player.hp)}/${state.player.maxHp}`; DOM.phpB.style.width = `${(state.player.hp/state.player.maxHp)*100}%`;
+            DOM.papT.innerText = `${Math.floor(state.player.ap)}/${state.player.maxAp}`; DOM.papB.style.width = `${(state.player.ap/state.player.maxAp)*100}%`;
+            DOM.ehpT.innerText = `${Math.floor(state.enemy.hp)}/${state.enemy.maxHp}`; DOM.ehpB.style.width = `${(state.enemy.hp/state.enemy.maxHp)*100}%`;
+            DOM.eapT.innerText = `${Math.floor(state.enemy.ap)}/${state.enemy.maxAp}`; DOM.eapB.style.width = `${(state.enemy.ap/state.enemy.maxAp)*100}%`;
+
+            let ps = '', es = '';
+            if(state.pStatus.def > 0) ps += `<span class="status-icon st-def">BLOCK</span>`;
+            if(state.pStatus.stun > 0) ps += `<span class="status-icon st-stun">STUNNED</span>`;
+            if(state.pStatus.dot > 0) ps += `<span class="status-icon st-dot">BLEED</span>`;
+            if(state.eStatus.def > 0) es += `<span class="status-icon st-def">BLOCK</span>`;
+            if(state.eStatus.stun > 0) es += `<span class="status-icon st-stun">STUNNED</span>`;
+            if(state.eStatus.dot > 0) es += `<span class="status-icon st-dot">BLEED</span>`;
+            document.getElementById('p-status').innerHTML = ps; document.getElementById('e-status').innerHTML = es;
+        }
+
+        function logEvent(msg, type='system') {
+            let el = document.createElement('div'); el.className = `log-item log-${type}`; el.innerHTML = msg;
+            DOM.log.appendChild(el); DOM.log.scrollTop = DOM.log.scrollHeight;
+        }
+
+        function floatTxt(tType, val, color) {
+            let tg = tType==='enemy'?DOM.eSpr:DOM.pSpr; let rect = tg.getBoundingClientRect(); let ar = document.getElementById('arena').getBoundingClientRect();
+            let randX = (Math.random() - 0.5) * 60; 
+            let fl = document.createElement('div'); fl.className = 'floater'; fl.style.color = color; fl.innerText = val;
+            fl.style.left = `${rect.left - ar.left + (rect.width/2) - 20 + randX}px`; fl.style.top = `${rect.top - ar.top + 20}px`;
+            document.getElementById('arena').appendChild(fl); setTimeout(() => fl.remove(), 1000);
+        }
+
+        function anim(id, c) { let e = document.getElementById(id); e.classList.remove(c); void e.offsetWidth; e.classList.add(c); setTimeout(()=>e.classList.remove(c), 400); }
+        function shakeScreen() { anim('game-engine', 'screen-shake'); }
+        function flashScreen() { let f = document.getElementById('screen-flash'); f.classList.remove('flash-anim'); void f.offsetWidth; f.classList.add('flash-anim'); }
+
+        function resolvePreTurn(str) {
+            let st = str==='player' ? state.pStatus : state.eStatus;
+            let data = str==='player' ? state.player : state.enemy;
+            if(st.dot > 0) {
+                data.hp -= st.dotDmg; st.dot--;
+                logEvent(`[ATTRITION] ${data.name} menderita ${st.dotDmg} DMG.`, 'status');
+                floatTxt(str, `-${st.dotDmg}`, '#e11d48'); anim(str==='player'?'p-sprite':'e-sprite', 'anim-hit');
+            }
+            st.def = 0; 
+        }
+
+        function executeDefend() {
+            if(state.turn !== 'player') return;
+            state.turn = 'processing'; document.getElementById('nav-defend').classList.add('active'); lockUI(); resolvePreTurn('player');
+            if(checkWin()) return; if(checkStun('player')) return endTurn('enemy');
+
+            state.player.ap = Math.min(state.player.maxAp, state.player.ap + 40);
+            state.pStatus.def = 0.6;
+            logEvent(`[TACTICAL DEFEND] Bertahan (+40 AP).`, 'player');
+            updateHUD(); endTurn('enemy');
+        }
+
+        function execItem(idx) {
+            state.turn = 'processing'; lockUI(); resolvePreTurn('player');
+            if(checkWin()) return; if(checkStun('player')) return endTurn('enemy');
+
+            let it = state.inventory[idx]; it.count--;
+            state.player.hp = Math.min(state.player.maxHp, state.player.hp + it.heal);
+            state.player.ap = Math.min(state.player.maxAp, state.player.ap + it.ap);
+            logEvent(`[INVENTORY] Mengkonsumsi ${it.name}.`, 'player');
+            if(it.heal > 0) floatTxt('player', `+${it.heal}`, '#10b981');
+            if(it.ap > 0) floatTxt('player', `+${it.ap} AP`, '#0ea5e9');
+            
+            updateHUD(); endTurn('enemy');
+        }
+
+        function execSkill(idx) {
+            state.turn = 'processing'; lockUI(); resolvePreTurn('player');
+            if(checkWin()) return; if(checkStun('player')) return endTurn('enemy');
+
+            let sk = state.player.skills[idx];
+            if(sk.cost < 0) state.player.ap += sk.cost; else state.player.ap = Math.min(state.player.maxAp, state.player.ap + sk.cost);
+            
+            let hit = true; 
+            if(sk.type === 'heavy' && Math.random() > 0.75) hit = false; 
+            if(state.eStatus.def === 1) hit = false; 
+
+            logEvent(`[EXECUTE] ${sk.name}`, 'player');
+
+            if(!hit) { 
+                logEvent(`[EVADED] Target berhasil menghindari serangan!`, 'system'); anim('p-sprite', 'anim-atk'); 
+            } else {
+                if(sk.dmg > 0) { 
+                    anim('p-sprite', 'anim-atk'); 
+                    if(sk.type === 'heavy') flashScreen();
+                    calcDamage('enemy', sk.dmg); 
+                }
+                else if(sk.dmg < 0) { 
+                    let h = Math.abs(sk.dmg); state.player.hp = Math.min(state.player.maxHp, state.player.hp+h); 
+                    floatTxt('player', `+${h}`, '#10b981'); 
+                }
+
+                if(sk.eff === 'defend') state.pStatus.def = 0.5;
+                if(sk.eff === 'defend_heavy') state.pStatus.def = 0.9;
+                if(sk.eff === 'evade') state.pStatus.def = 1;
+                if(sk.eff === 'stun') { state.eStatus.stun = 1; logEvent(`Target terkena STUN!`, 'status'); }
+                if(sk.eff === 'dot') { state.eStatus.dot = 3; state.eStatus.dotDmg = 15; logEvent(`Target Bleeding!`, 'status'); }
+                if(sk.eff === 'dot_heavy') { state.eStatus.dot = 3; state.eStatus.dotDmg = 35; logEvent(`Target Toxicated!`, 'status'); }
+                if(sk.eff === 'drain') { let d = Math.min(25, state.enemy.ap); state.enemy.ap-=d; state.player.ap = Math.min(state.player.maxAp, state.player.ap+d); logEvent(`Stole ${d} AP`, 'status'); }
+                if(sk.eff === 'drain_heavy') { let d = Math.min(40, state.enemy.ap); state.enemy.ap-=d; state.player.ap = Math.min(state.player.maxAp, state.player.ap+d); logEvent(`Stole ${d} AP`, 'status'); }
+            }
+            updateHUD(); if(!checkWin()) endTurn('enemy');
+        }
+
+        function calcDamage(tStr, rDmg) {
+            let tg = tStr==='enemy'?state.enemy:state.player; let st = tStr==='enemy'?state.eStatus:state.pStatus;
+            let fDmg = rDmg;
+            if(st.def > 0 && st.def < 1) { 
+                fDmg = Math.floor(rDmg * (1 - st.def)); 
+                anim(tStr==='enemy'?'e-sprite':'p-sprite', 'anim-block'); 
+                logEvent(`[BLOCKED] Damage tereduksi menjadi ${fDmg}.`, 'system'); 
+            }
+            
+            if(Math.random() > 0.85) { 
+                fDmg = Math.floor(rDmg * 1.5); 
+                logEvent(`[CRITICAL STRIKE] Pertahanan tembus!`, 'log-critical'); 
+                shakeScreen(); 
+            }
+            
+            tg.hp = Math.max(0, tg.hp - fDmg);
+            if(st.def === 0) anim(tStr==='enemy'?'e-sprite':'p-sprite', 'anim-hit');
+            floatTxt(tStr, `-${fDmg}`, '#f43f5e');
+        }
+
+        function checkStun(str) {
+            let st = str==='player'?state.pStatus:state.eStatus; let nm = str==='player'?state.player.name:state.enemy.name;
+            if(st.stun > 0) { st.stun--; logEvent(`[STUNNED] ${nm} kehilangan momentum!`, 'status'); return true; } return false;
+        }
+
+        function lockUI() { document.querySelectorAll('.action-panel button, .menu-nav button').forEach(b => b.disabled = true); }
+        function unlockUI() { document.querySelectorAll('.menu-btn').forEach(b => b.disabled = false); switchTab('main'); updateHUD(); }
+
+        function endTurn(nxt) {
+            setTimeout(() => {
+                state.turn = nxt;
+                if(nxt === 'enemy') enemyAI();
+                else { state.player.ap = Math.min(state.player.maxAp, state.player.ap + state.player.apRegen); unlockUI(); }
+            }, 1200);
+        }
+
+        function enemyAI() {
+            resolvePreTurn('enemy'); updateHUD();
+            if(checkWin()) return; if(checkStun('enemy')) return endTurn('player');
+
+            state.enemy.ap = Math.min(state.enemy.maxAp, state.enemy.ap + state.enemy.apRegen);
+            let ai = state.enemy.ai; let act = '';
+            let hpPct = state.enemy.hp / state.enemy.maxHp; let pAp = state.player.ap;
+
+            if (ai === 'survival') {
+                if (hpPct < 0.4 && state.enemy.ap >= 50) act = 'heal';
+                else if (state.enemy.ap >= 80) act = 'nuke';
+                else act = 'atk';
+            } 
+            else if (ai === 'drainer') {
+                if (pAp >= 50 && state.enemy.ap >= 40) act = 'drain';
+                else if (state.eStatus.dot === 0 && state.enemy.ap >= 50) act = 'stun';
+                else act = 'atk';
+            }
+            else if (ai === 'berserk') {
+                if (state.pStatus.def > 0) act = 'buff'; 
+                else if (state.enemy.ap >= 60) act = 'heavy';
+                else act = 'atk';
+            }
+            else if (ai === 'technical') {
+                if (state.pStatus.dot === 0 && state.enemy.ap >= 40) act = 'dot';
+                else if (hpPct < 0.5 && state.enemy.ap >= 40) act = 'evade';
+                else act = 'atk';
+            }
+            else { 
+                if (pAp < 20 && state.enemy.ap >= 70) act = 'nuke'; 
+                else if (state.enemy.ap >= 50 && Math.random()>0.5) act = 'heavy';
+                else act = 'atk';
+            }
+
+            anim('e-sprite', 'anim-atk-enemy');
+            
+            if (act === 'heal') { state.enemy.ap -= 50; state.enemy.hp = Math.min(state.enemy.maxHp, state.enemy.hp + 150); state.eStatus.def = 0.5; logEvent(`[BOSS] Regenerasi Korupsi! +150 HP.`, 'enemy'); floatTxt('enemy', '+150', '#10b981'); }
+            else if (act === 'nuke') { state.enemy.ap -= 70; logEvent(`[BOSS] SERANGAN FATAL DIINISIASI!`, 'log-critical'); flashScreen(); shakeScreen(); calcDamage('player', 130); }
+            else if (act === 'drain') { state.enemy.ap -= 40; state.player.ap = Math.max(0, state.player.ap-50); logEvent(`[BOSS] Sabotase Hukum. -50 AP milikmu hilang.`, 'enemy'); calcDamage('player', 30); }
+            else if (act === 'stun') { state.enemy.ap -= 50; state.pStatus.stun = 1; logEvent(`[BOSS] Mengintimidasi! Kamu terkena STUN!`, 'status'); calcDamage('player', 25); }
+            else if (act === 'heavy') { state.enemy.ap -= 50; logEvent(`[BOSS] Meluncurkan serangan berat.`, 'enemy'); calcDamage('player', 75); }
+            else if (act === 'dot') { state.enemy.ap -= 40; state.pStatus.dot = 3; state.pStatus.dotDmg = 25; logEvent(`[BOSS] Kampanye hitam. DoT 25 DMG aktif!`, 'status'); calcDamage('player', 15); }
+            else if (act === 'evade') { state.enemy.ap -= 40; state.eStatus.def = 1; logEvent(`[BOSS] Bersembunyi di balik hukum (Evade 100%).`, 'enemy'); }
+            else if (act === 'buff') { state.enemy.ap += 50; state.eStatus.def = 0.3; logEvent(`[BOSS] Mengumpulkan massa bayaran (+50 AP).`, 'enemy'); }
+            else { state.enemy.ap -= 10; logEvent(`[BOSS] Menyerang dengan kekuatan standar.`, 'enemy'); calcDamage('player', 35); }
+
+            updateHUD(); if(!checkWin()) endTurn('player');
+        }
+
+        function checkWin() {
+            if(state.enemy.hp <= 0) { 
+                setTimeout(()=> { 
+                    alert('MISI BERHASIL. SISTEM BERHASIL DIBERSIHKAN DARI PARASIT.'); 
+                    closeGame();
+                    location.reload(); 
+                }, 2000); 
+                return true; 
+            }
+            if(state.player.hp <= 0) { 
+                setTimeout(()=> { 
+                    alert('OPERASI GAGAL. KAMU TELAH DISINGKIRKAN.'); 
+                    closeGame();
+                    location.reload(); 
+                }, 2000); 
+                return true; 
+            }
+            return false;
+        }
+
+        initSelection();
     </script>
 </body>
 </html>
