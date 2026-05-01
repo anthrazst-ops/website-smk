@@ -25,7 +25,7 @@
             color: var(--pure-white);
             overflow-x: hidden; min-height: 100vh;
             line-height: 1.5;
-            position: relative;
+            position: relative; /* Penting untuk absolute positioning anaknya */
         }
 
         /* --- TOP RACING STRIPE --- */
@@ -36,7 +36,7 @@
             z-index: 10001;
         }
 
-        /* --- NAVIGASI HEADER (FIXED) --- */
+        /* --- NAVIGASI HEADER (FIXED MELAYANG) --- */
         nav {
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 6%; background: rgba(0, 0, 0, 0.9);
@@ -114,7 +114,7 @@
         .btn-main::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: var(--amg-tosca); transition: 0.3s; z-index: 0; }
         .btn-main:hover::before { left: 0; }
 
-        /* --- SECTIONS --- */
+        /* --- SECTIONS (COMPACT) --- */
         .section-header { padding: 30px 8% 20px; display: flex; align-items: center; gap: 15px; }
         .section-title { font-size: 1.8rem; color: var(--pure-white); font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
         .section-title span { color: var(--amg-tosca); }
@@ -142,41 +142,38 @@
         footer span { color: var(--amg-silver); font-weight: 800; }
 
         /* ========================================================= */
-        /* --- SMARTPHONE MODE (BLOK KHUSUS OPTIMISASI MOBILE) --- */
+        /* --- SMARTPHONE MODE (FITUR MUTLAK SAMA, HANYA RESIZE) --- */
         /* ========================================================= */
         @media screen and (max-width: 768px) {
-            /* Header adjustments */
-            nav { padding: 0 5%; height: 60px; }
-            .main-logo { height: 28px; }
+            nav { padding: 0 5%; height: 65px; }
+            .header-brand { gap: 8px; }
+            .main-logo { height: 26px; }
             .logo-text { font-size: 1.2rem; }
-            .logo-badge { font-size: 0.65rem; padding: 2px 5px; margin-left: 8px; }
-            .nav-links { display: none; } /* Sembunyikan text IG biar ga penuh */
+            .logo-badge { font-size: 0.65rem; padding: 2px 5px; margin-left: 6px; }
+            
+            /* Teks IG tetap dimunculin, cuma dikecilin dikit biar muat */
+            .nav-links a { font-size: 0.75rem; letter-spacing: 1px; }
 
-            /* Navigasi Control Tetap Absolute di bawah Header */
-            .nav-controls { 
-                top: 72px; /* Sesuaikan dengan tinggi nav baru (60px + 4px offset + 8px margin) */
-                right: 5%; 
-            }
+            /* Navigasi Control tetap absolute dan di posisinya, cuma turun dikit nyesuain header */
+            .nav-controls { right: 5%; top: 80px; }
             .btn-nav { width: 30px; height: 30px; font-size: 0.9rem; }
 
-            /* Main Content Adjustments */
-            main { padding-top: 64px; }
+            main { padding-top: 69px; }
 
-            /* Homepage adjustments */
-            #view-home { padding: 0 5%; min-height: calc(100vh - 64px); }
-            .hero-watermark { font-size: 8rem; right: -15%; opacity: 0.05; } /* Kecilin watermark biar ga overflow */
+            #view-home { padding: 0 5%; min-height: calc(100vh - 69px); }
+            .hero-watermark { font-size: 8rem; right: -15%; opacity: 0.05; }
             .hero-aero { width: 60px; margin-bottom: 20px; }
             .hero-subtitle { font-size: 1rem; letter-spacing: 4px; }
             #view-home h1 { font-size: 2.8rem; margin-bottom: 20px; }
             #view-home p { font-size: 1rem; margin-bottom: 30px; padding-left: 15px; }
             .btn-main { padding: 12px 30px; font-size: 0.9rem; }
 
-            /* Sections & Cards adjustments */
             .section-header { padding: 30px 5% 15px; flex-direction: column; align-items: flex-start; gap: 10px; }
             .section-title { font-size: 1.5rem; }
             .section-line { width: 100%; }
             .section-line::after { width: 40px; }
 
+            /* Grid tetap ada, berubah jadi ke bawah (1 kolom) murni buat UI smartphone */
             .grid-features { grid-template-columns: 1fr; padding: 0 5%; gap: 12px; }
             .card-content { padding: 20px; }
             .card-number { font-size: 0.7rem; margin-bottom: 5px; }
@@ -187,7 +184,6 @@
             .card-large { margin: 20px 5% 0; }
             .card-large .card-content h3 { font-size: 1.3rem; }
 
-            /* Footer adjustments */
             footer { padding: 20px 5%; font-size: 0.75rem; }
         }
     </style>
