@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyberskaliska</title>
+    <title>CYBERSKALISKA | AMG PERFORMANCE</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800;900&display=swap');
 
+        /* --- THEME VARS: MERCEDES AMG PETRONAS F1 --- */
         :root {
-            --amg-tosca: #00A19C;
-            --amg-black: #000000;
-            --amg-dark: #0D0D0D;
-            --amg-panel: #141414;
-            --amg-silver: #A2AAAD;
-            --pure-white: #FFFFFF;
+            --amg-tosca: #00A19C;       /* Petronas Green */
+            --amg-black: #000000;       /* Pure Carbon Black */
+            --amg-dark: #0D0D0D;        /* Matte Dark */
+            --amg-panel: #141414;       /* Panel Dark Grey */
+            --amg-silver: #A2AAAD;      /* Mercedes Silver */
+            --pure-white: #FFFFFF;      /* Pure White */
             --text-muted: #8A8D91;
         }
 
@@ -26,7 +27,7 @@
             line-height: 1.5;
         }
 
-        /* RACING STRIPE */
+        /* --- TOP RACING STRIPE --- */
         body::before {
             content: "";
             position: fixed; top: 0; left: 0; width: 100%; height: 4px;
@@ -34,7 +35,7 @@
             z-index: 10001;
         }
 
-        /* NAVIGASI HEADER */
+        /* --- NAVIGASI HEADER (FIXED) --- */
         nav {
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 6%; background: rgba(0, 0, 0, 0.9);
@@ -43,19 +44,43 @@
             height: 70px; backdrop-filter: blur(10px);
         }
 
-        .logo { font-size: 1.6rem; font-weight: 800; color: var(--pure-white); letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; }
-        .logo span { color: var(--amg-tosca); margin-left: 5px; }
-        .logo-badge { background: var(--amg-tosca); color: var(--amg-black); font-size: 0.75rem; padding: 2px 6px; margin-left: 10px; font-weight: 900; letter-spacing: 1px; transform: skewX(-15deg); }
+        .header-brand {
+            display: flex; align-items: center; gap: 12px;
+        }
 
-        .nav-links a { color: var(--amg-silver); text-decoration: none; font-size: 0.9rem; font-weight: 600; letter-spacing: 2px; transition: 0.2s; cursor: pointer; text-transform: uppercase; }
+        /* Styling Logo Profesional */
+        .main-logo {
+            height: 35px; /* Tetap compact & formal */
+            width: auto;
+            border-radius: 2px;
+            border: 1px solid #222;
+        }
+
+        .logo-text { 
+            font-size: 1.5rem; font-weight: 800; color: var(--pure-white); 
+            letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; 
+        }
+        .logo-text span { color: var(--amg-tosca); margin-left: 4px; }
+        
+        .logo-badge { 
+            background: var(--amg-tosca); color: var(--amg-black); 
+            font-size: 0.75rem; padding: 2px 6px; margin-left: 10px; 
+            font-weight: 900; letter-spacing: 1px; transform: skewX(-15deg); 
+        }
+
+        .nav-links a { 
+            color: var(--amg-silver); text-decoration: none; font-size: 0.9rem; 
+            font-weight: 600; letter-spacing: 2px; transition: 0.2s; 
+            text-transform: uppercase; 
+        }
         .nav-links a:hover { color: var(--pure-white); }
 
-        /* --- NAV CONTROLS: FIXED POSISI LAYAR (SELALU DI ATAS) --- */
+        /* --- NAVIGATION CONTROLS: FIXED POSISI (Pojok Kanan Atas) --- */
         .nav-controls {
             position: fixed;
-            top: 15px; /* Sejajar di dalam area header tapi secara teknis melayang */
-            right: 18%; /* Digeser ke kiri sedikit agar tidak menabrak link IG */
-            z-index: 10002; /* Di atas segalanya */
+            top: 85px; 
+            right: 6%;
+            z-index: 10002;
             display: flex; gap: 6px;
         }
 
@@ -70,13 +95,13 @@
         .btn-nav:hover:not(:disabled) { background: var(--pure-white); transform: skewX(-15deg) scale(1.1); }
         .btn-nav:disabled { opacity: 0.2; cursor: not-allowed; background: #333; color: #666; box-shadow: none; }
 
-        /* SPA SYSTEM */
+        /* --- SPA SYSTEM --- */
         main { width: 100%; min-height: 100vh; display: flex; flex-direction: column; padding-top: 74px; }
         .page-view { display: none; padding-bottom: 60px; animation: fadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; width: 100%; flex-grow: 1; position: relative; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* HOMEPAGE */
-        #view-home { flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 8%; padding-right: 8%; min-height: calc(100vh - 74px); background: radial-gradient(circle at 100% 50%, #151515 0%, var(--amg-black) 80%); overflow: hidden; }
+        /* --- HOMEPAGE --- */
+        #view-home { flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 8%; padding-right: 8%; min-height: calc(100vh - 74px); background: radial-gradient(circle at 100% 50%, #151515) 0%, var(--amg-black) 80%); overflow: hidden; }
         .hero-watermark { position: absolute; right: -5%; top: 50%; transform: translateY(-50%) skewX(-15deg); font-size: 16rem; font-weight: 900; color: rgba(255, 255, 255, 0.02); pointer-events: none; line-height: 0.8; text-align: right; z-index: 0; text-transform: uppercase; letter-spacing: -5px; }
         .hero-content { position: relative; z-index: 10; max-width: 800px; }
         .hero-aero { width: 80px; height: 5px; background: var(--amg-tosca); transform: skewX(-30deg); margin-bottom: 25px; box-shadow: 0 0 15px rgba(0, 161, 156, 0.5); }
@@ -89,14 +114,14 @@
         .btn-main::before { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: var(--amg-tosca); transition: 0.3s; z-index: 0; }
         .btn-main:hover::before { left: 0; }
 
-        /* SECTIONS */
+        /* --- SECTIONS (COMPACT) --- */
         .section-header { padding: 30px 8% 20px; display: flex; align-items: center; gap: 15px; }
         .section-title { font-size: 1.8rem; color: var(--pure-white); font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
         .section-title span { color: var(--amg-tosca); }
         .section-line { flex-grow: 1; height: 1px; background: #222; position: relative; }
         .section-line::after { content: ""; position: absolute; left: 0; top: -1px; width: 60px; height: 3px; background: var(--amg-tosca); transform: skewX(-30deg); }
 
-        /* CARDS COMPACT */
+        /* --- CARDS --- */
         .grid-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; padding: 0 8%; }
         .card { background: var(--amg-panel); border: 1px solid #1e1e1e; position: relative; transition: 0.3s; display: flex; flex-direction: column; }
         .card::before { content: ""; position: absolute; top: -1px; left: 0; width: 0; height: 3px; background: var(--amg-tosca); transition: 0.3s; }
@@ -118,88 +143,62 @@
 
         @media screen and (max-width: 768px) {
             nav { padding: 0 5%; }
-            .nav-controls { right: 5%; top: 20px; }
+            .logo-text { font-size: 1.1rem; }
+            .nav-controls { right: 5%; top: 80px; }
             .nav-links { display: none; }
             #view-home { padding: 0 5%; }
             #view-home h1 { font-size: 2.5rem; }
             .grid-features { grid-template-columns: 1fr; padding: 0 5%; gap: 12px; }
             .card-large { margin: 25px 5% 0; }
+            .main-logo { height: 24px; }
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo">CYBERSKALISKA <div class="logo-badge">#26</div></div>
+        <div class="header-brand">
+            <!-- Panggil logo langsung dari direktori utama -->
+            <img src="logocs.jpeg" alt="Cyberskaliska Logo" class="main-logo">
+            <div class="logo-text">CYBERSKALISKA <div class="logo-badge">W14</div></div>
+        </div>
         <div class="nav-links">
             <a href="https://www.instagram.com/cybersmkyapaliskrian" target="_blank">@cyberskaliska</a>
         </div>
     </nav>
 
-    <!-- NAVIGATION CONTROLS - FIXED AT TOP RIGHT -->
     <div class="nav-controls">
         <button id="btn-back" class="btn-nav" onclick="goBack()" disabled><span>&lt;</span></button>
         <button id="btn-forward" class="btn-nav" onclick="goForward()" disabled><span>&gt;</span></button>
     </div>
 
     <main>
+        <!-- HALAMAN HOME -->
         <section id="view-home" class="page-view" style="display: flex;">
-            <div class="hero-watermark">SIBER   .<br>SKALISKA</div>
+            <div class="hero-watermark">PERFORMANCE<br>HYBRID</div>
             <div class="hero-content">
                 <div class="hero-aero"></div>
-                <div class="hero-subtitle">SMK Yapalis Krian Sidoarjo</div>
+                <div class="hero-subtitle">SMK Yapalis Sidoarjo</div>
                 <h1>Engineered For<br><span>Absolute Security</span></h1>
                 <p>Membangun perimeter presisi. Cyberskaliska mendedikasikan diri untuk mencetak ahli keamanan siber dengan eksekusi mutlak di medan digital global.</p>
                 <button class="btn-main" onclick="navigateTo('view-intro')"><span>Inisiasi Sistem</span></button>
             </div>
         </section>
 
+        <!-- HALAMAN INTRO -->
         <section id="view-intro" class="page-view">
-            <div class="section-header">
-                <h2 class="section-title">Sektor <span>Fungsional</span></h2>
-                <div class="section-line"></div>
-            </div>
+            <div class="section-header"><h2 class="section-title">Sektor <span>Fungsional</span></h2><div class="section-line"></div></div>
             <div class="grid-features">
-                <div class="card">
-                    <div class="card-content">
-                        <div class="card-number">/// OPS_01</div>
-                        <h3>LEAD OPERATOR</h3>
-                        <p>Lead Purple Team Sector. Pakar simulasi serangan dan penyusun alur taktis ofensif-defensif.</p>
-                        <button class="btn-small" onclick="navigateTo('view-cap-darkowl')"><span>Lihat Detail</span></button>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-content">
-                        <div class="card-number">/// SEC_02</div>
-                        <h3>BLUE OPERATOR</h3>
-                        <p>Lead Blue Team Sector. Pengendali pertahanan jaringan dan audit sistem infrastruktur.</p>
-                        <button class="btn-small" onclick="navigateTo('view-cap-gargant')"><span>Lihat Detail</span></button>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-content">
-                        <div class="card-number">/// TRD_03</div>
-                        <h3>GREEN OPERATOR</h3>
-                        <p>Lead Coders. Inisiator logika agresif dan optimasi algoritma kode siber.</p>
-                        <button class="btn-small" onclick="navigateTo('view-cap-lumprat')"><span>Lihat Detail</span></button>
-                    </div>
-                </div>
+                <div class="card"><div class="card-content"><div class="card-number">/// SEC_01</div><h3>Darkowl</h3><p>Lead Purple Team Sector. Pakar simulasi serangan dan penyusun alur taktis ofensif-defensif.</p><button class="btn-small" onclick="navigateTo('view-cap-darkowl')"><span>Akses Data</span></button></div></div>
+                <div class="card"><div class="card-content"><div class="card-number">/// SEC_02</div><h3>Gargant</h3><p>Lead Blue Team Sector. Pengendali pertahanan jaringan dan audit sistem infrastruktur.</p><button class="btn-small" onclick="navigateTo('view-cap-gargant')"><span>Akses Data</span></button></div></div>
+                <div class="card"><div class="card-content"><div class="card-number">/// SEC_03</div><h3>Lumprat</h3><p>Lead Coders. Inisiator logika agresif dan optimasi algoritma kode siber.</p><button class="btn-small" onclick="navigateTo('view-cap-lumprat')"><span>Akses Data</span></button></div></div>
             </div>
-            <div class="card card-large">
-                <div class="card-content">
-                    <div class="card-number">/// CORE DIRECTIVE</div>
-                    <h3>Arahan Strategis Operasional</h3>
-                    <p>Beroperasi sebagai unit taktis tertinggi. Kami mengintegrasikan rekayasa serangan, pertahanan berlapis, dan efisiensi mekanika kode untuk performa absolut.</p>
-                </div>
-            </div>
+            <div class="card card-large"><div class="card-content"><div class="card-number">/// CORE DIRECTIVE</div><h3>Arahan Strategis Operasional</h3><p>Beroperasi sebagai unit taktis tertinggi. Kami mengintegrasikan rekayasa serangan, pertahanan berlapis, dan efisiensi mekanika kode untuk performa absolut.</p></div></div>
         </section>
 
-        <!-- DIVISI PAGES -->
+        <!-- ISI DIVISI (DIPERMURNI WARNA TOSCA PADA TEXT SEC) -->
         <section id="view-cap-darkowl" class="page-view">
-            <div class="section-header">
-                <h2 class="section-title">Divisi <span>Purple Team</span></h2>
-                <div class="section-line"></div>
-            </div>
+            <div class="section-header"><h2 class="section-title">Divisi <span>Purple Team</span></h2><div class="section-line"></div></div>
             <div class="grid-features">
                 <div class="card"><div class="card-content"><h3>Red/Blue Simulation</h3><p>Sinkronisasi skenario operasi ofensif dan defensif secara real-time.</p></div></div>
                 <div class="card"><div class="card-content"><h3>Penetration Testing</h3><p>Manuver eksploitasi kerentanan terkontrol untuk deteksi struktural.</p></div></div>
@@ -208,27 +207,21 @@
         </section>
 
         <section id="view-cap-gargant" class="page-view">
-            <div class="section-header">
-                <h2 class="section-title">Divisi <span>Blue Team</span></h2>
-                <div class="section-line"></div>
-            </div>
+            <div class="section-header"><h2 class="section-title">Divisi <span>Blue Team</span></h2><div class="section-line"></div></div>
             <div class="grid-features">
                 <div class="card"><div class="card-content"><h3>Digital Forensics</h3><p>Pembedahan analitis log server untuk rekonstruksi data telemetri insiden.</p></div></div>
-                <div class="card"><div class="card-content"><h3>Cryptography</h3><p>Implementasi arsitektur algoritma enkripsi guna mengunci integritas data.</p></div></div>
+                <div class="card"><div class="card-content"><h3>Cryptography</h3><p>Implementasi arsitektur algoritma enkripsi guna mengunci integritas data rahasia.</p></div></div>
             </div>
             <div class="card card-large"><div class="card-content"><div class="card-number">/// PROTOCOL</div><h3>Mekanisme Pertahanan</h3><p>Model perlindungan Defense in Depth ditopang pengawasan 24/7 dan respons otomatis.</p></div></div>
         </section>
 
         <section id="view-cap-lumprat" class="page-view">
-            <div class="section-header">
-                <h2 class="section-title">Divisi <span>Coders</span></h2>
-                <div class="section-line"></div>
-            </div>
+            <div class="section-header"><h2 class="section-title">Divisi <span>Coders</span></h2><div class="section-line"></div></div>
             <div class="grid-features">
                 <div class="card"><div class="card-content"><h3>Exploit Development</h3><p>Rekayasa skrip manuver otomatis untuk eskalasi penetrasi massal.</p></div></div>
                 <div class="card"><div class="card-content"><h3>Web App Security</h3><p>Inspeksi baris kode tingkat dalam untuk menetralisir kerentanan logika sistem.</p></div></div>
             </div>
-            <div class="card card-large"><div class="card-content"><div class="card-number">/// INITIATIVE</div><h3>Efisiensi Algoritma</h3><p>Struktur kode biner matang yang memberikan performa optimal pada setiap eksekusi program.</p></div></div>
+            <div class="card card-large"><div class="card-content"><div class="card-number">/// INITIATIVE</div><h3>Efisiensi Algoritma</h3><p>Struktur kode biner matang yang memberikan performa optimal pada setiap eksekusi.</p></div></div>
         </section>
     </main>
 
