@@ -53,8 +53,13 @@
         
         .logo-badge { background: var(--amg-tosca); color: var(--amg-black); font-size: 0.75rem; padding: 2px 6px; margin-left: 10px; font-weight: 900; letter-spacing: 1px; transform: skewX(-15deg); }
 
+        .nav-links { display: flex; gap: 20px; align-items: center; }
         .nav-links a { color: var(--amg-silver); text-decoration: none; font-size: 0.9rem; font-weight: 600; letter-spacing: 2px; transition: 0.2s; text-transform: uppercase; }
         .nav-links a:hover { color: var(--pure-white); }
+        
+        /* Tombol Khusus Paddock di Navbar */
+        .btn-paddock-nav { border: 1px solid var(--amg-tosca); color: var(--amg-tosca) !important; padding: 5px 12px; font-size: 0.8rem !important; }
+        .btn-paddock-nav:hover { background: var(--amg-tosca); color: var(--amg-black) !important; }
 
         /* --- NAVIGATION CONTROLS: ABSOLUTE (DI BAWAH HEADER) --- */
         .nav-controls {
@@ -137,7 +142,11 @@
             .main-logo { height: 26px; }
             .logo-text { font-size: 1.2rem; }
             .logo-badge { font-size: 0.65rem; padding: 2px 5px; margin-left: 6px; }
-            .nav-links { display: none; }
+            
+            /* Sembunyikan teks IG dan tulisan "ACCESS", sisain tulisan "PADDOCK" aja biar muat */
+            .nav-links a:last-child { display: none; }
+            .btn-paddock-nav { padding: 4px 8px; font-size: 0.7rem !important; }
+
             .nav-controls { right: 5%; top: 80px; }
             .btn-nav { width: 30px; height: 30px; font-size: 0.9rem; }
             
@@ -175,6 +184,8 @@
             <div class="logo-text">CYBERSKALISKA <div class="logo-badge">W14</div></div>
         </div>
         <div class="nav-links">
+            <!-- Link ke Halaman Login Paddock -->
+            <a href="login.html" class="btn-paddock-nav">PADDOCK ACCESS</a>
             <a href="https://www.instagram.com/cybersmkyapaliskrian" target="_blank">@cyberskaliska</a>
         </div>
     </nav>
@@ -244,34 +255,23 @@
 
     <!-- SCRIPT HASH ROUTING (Ngerubah URL tanpa pisah file) -->
     <script>
-        // Fungsi untuk handle perubahan URL (Hash)
         function handleHashRoute() {
             const hash = window.location.hash || '#view-home';
-            
-            // Sembunyikan semua halaman
             document.querySelectorAll('.page-view').forEach(el => {
                 el.style.display = 'none';
             });
-            
-            // Tampilkan halaman yang sesuai hash
             const targetElement = document.querySelector(hash);
             if(targetElement) {
                 targetElement.style.display = hash === '#view-home' ? 'flex' : 'block';
             }
-            
-            // Scroll otomatis ke atas tiap ganti halaman
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Kalau di-klik, ganti hash URL-nya (Otomatis mancing event 'hashchange')
         function navigateTo(id) {
             window.location.hash = id;
         }
 
-        // Dengerin kalau user klik back/forward di browser ATAU lewat tombol kita
         window.addEventListener('hashchange', handleHashRoute);
-        
-        // Jalanin pas web pertama kali dimuat
         window.addEventListener('load', handleHashRoute);
     </script>
 </body>
