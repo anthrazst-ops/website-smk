@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PADDOCK LOGIN | CYBERSKALISKA</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800;900&display=swap');
+        
+        :root {
+            --amg-tosca: #00A19C; --amg-black: #000000; --amg-dark: #0D0D0D; 
+            --amg-silver: #A2AAAD; --pure-white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+
+        body {
+            background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, var(--amg-black) 100%);
+            color: var(--pure-white); height: 100vh; display: flex;
+            justify-content: center; align-items: center; overflow: hidden;
+        }
+
+        .login-box {
+            background: rgba(10, 10, 10, 0.9); border: 1px solid #222;
+            padding: 40px; width: 100%; max-width: 400px;
+            border-top: 3px solid var(--amg-tosca); position: relative;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+        }
+
+        .brand { text-align: center; margin-bottom: 30px; }
+        .brand h2 { font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; }
+        .brand span { color: var(--amg-tosca); }
+        .brand p { color: var(--amg-silver); font-size: 0.85rem; letter-spacing: 4px; text-transform: uppercase; margin-top: 5px; }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 0.75rem; color: var(--amg-silver); margin-bottom: 5px; letter-spacing: 1px; }
+        .input-group input {
+            width: 100%; background: transparent; border: 1px solid #333;
+            color: var(--pure-white); padding: 12px 15px; font-size: 1rem;
+            outline: none; transition: 0.3s; font-family: monospace;
+        }
+        .input-group input:focus { border-color: var(--amg-tosca); box-shadow: inset 0 0 10px rgba(0, 161, 156, 0.1); }
+
+        .btn-login {
+            width: 100%; padding: 15px; background: var(--pure-white); color: var(--amg-black);
+            border: none; font-weight: 800; cursor: pointer; text-transform: uppercase;
+            letter-spacing: 2px; transition: 0.3s; margin-top: 10px; font-size: 1rem;
+        }
+        .btn-login:hover { background: var(--amg-tosca); }
+
+        .error-msg { color: #ff3333; font-size: 0.8rem; text-align: center; margin-top: 15px; height: 15px; }
+        .back-link { display: block; text-align: center; margin-top: 25px; color: var(--amg-silver); font-size: 0.8rem; text-decoration: none; transition: 0.2s; }
+        .back-link:hover { color: var(--amg-tosca); }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <div class="brand">
+            <h2>CYBER<span>SKALISKA</span></h2>
+            <p>Paddock Access</p>
+        </div>
+        
+        <div class="input-group">
+            <label>OPERATOR ID</label>
+            <input type="text" id="userid" placeholder="e.g. OPS01" autocomplete="off" spellcheck="false">
+        </div>
+        
+        <div class="input-group">
+            <label>PASSCODE</label>
+            <input type="password" id="passcode" placeholder="••••••••">
+        </div>
+
+        <button class="btn-login" onclick="attemptLogin()">Authorize</button>
+        <div class="error-msg" id="error-msg"></div>
+
+        <a href="index.html" class="back-link">Return to Public Sector</a>
+    </div>
+
+    <script>
+        // Database User Sederhana
+        const validUsers = {
+            "OPS01": "w14", // Lead Operator
+            "SEC02": "w14", // Blue Operator
+            "TRD03": "w14"  // Green Operator
+        };
+
+        function attemptLogin() {
+            const user = document.getElementById('userid').value.toUpperCase();
+            const pass = document.getElementById('passcode').value;
+            const errorDiv = document.getElementById('error-msg');
+
+            if (validUsers[user] && validUsers[user] === pass) {
+                // Set sesi login biar diterima sama paddock.html
+                sessionStorage.setItem('activeOperator', user);
+                errorDiv.style.color = "#00A19C";
+                errorDiv.innerText = "AUTHORIZATION GRANTED. ROUTING TO PADDOCK...";
+                
+                // Pindah ke halaman Paddock setelah 1 detik
+                setTimeout(() => { window.location.href = 'paddock.html'; }, 1000);
+            } else {
+                errorDiv.style.color = "#ff3333";
+                errorDiv.innerText = "ACCESS DENIED. INVALID CREDENTIALS.";
+            }
+        }
+
+        // Biar bisa pencet Enter buat login
+        document.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") attemptLogin();
+        });
+    </script>
+</body>
+</html>
