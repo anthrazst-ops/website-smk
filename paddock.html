@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PADDOCK | TELEMETRY</title>
+    <!-- Masukin mesin Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&display=swap');
+        
+        :root {
+            --amg-tosca: #00A19C; --amg-black: #000000; --amg-dark: #0D0D0D; 
+            --amg-panel: #111111; --amg-silver: #A2AAAD; --pure-white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+
+        body { background-color: var(--amg-black); color: var(--pure-white); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* Top Bar */
+        header {
+            background: var(--amg-panel); height: 60px; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; border-bottom: 2px solid var(--amg-tosca);
+        }
+        .header-title { font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; display: flex; align-items: center; }
+        .header-title span { color: var(--amg-tosca); margin-left: 5px; }
+        .operator-tag { font-size: 0.8rem; background: var(--pure-white); color: var(--amg-black); padding: 4px 10px; font-weight: 800; letter-spacing: 1px; border-radius: 2px; }
+        .btn-logout { background: transparent; border: 1px solid #444; color: var(--amg-silver); padding: 5px 15px; cursor: pointer; transition: 0.2s; font-weight: 700; text-transform: uppercase; font-size: 0.75rem;}
+        .btn-logout:hover { border-color: #ff3333; color: #ff3333; }
+
+        /* Main Grid */
+        .paddock-container { display: grid; grid-template-columns: 1fr 350px; height: calc(100vh - 60px); gap: 20px; padding: 20px; }
+
+        .panel { background: var(--amg-dark); border: 1px solid #222; display: flex; flex-direction: column; position: relative; }
+        .panel-header { background: #1a1a1a; padding: 10px 15px; font-size: 0.85rem; font-weight: 800; color: var(--amg-silver); text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #222; }
+
+        /* Telemetry Section */
+        .telemetry-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 20px; }
+        .data-box { background: var(--amg-panel); border: 1px solid #1f1f1f; padding: 20px; border-left: 3px solid var(--amg-silver); }
+        .data-box.active { border-left-color: var(--amg-tosca); }
+        .data-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .data-value { font-size: 2.5rem; font-weight: 900; font-family: monospace; color: var(--pure-white); margin-top: 5px; }
+        .data-value span { font-size: 1rem; color: var(--amg-silver); }
+
+        /* Chat Section */
+        .chat-container { display: flex; flex-direction: column; height: 100%; }
+        .chat-messages { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg { font-size: 0.9rem; max-width: 85%; }
+        .msg-header { font-size: 0.7rem; font-weight: 800; color: var(--amg-silver); margin-bottom: 3px; letter-spacing: 1px; }
+        .msg-body { background: #1a1a1a; padding: 10px; border-radius: 2px; color: var(--pure-white); border-left: 2px solid var(--amg-silver); word-wrap: break-word;}
+        
+        .msg.self { align-self: flex-end; }
+        .msg.self .msg-header { text-align: right; color: var(--amg-tosca); }
+        .msg.self .msg-body { background: #111; border-left: none; border-right: 2px solid var(--amg-tosca); }
+        
+        .chat-input { display: flex; padding: 15px; background: #1a1a1a; border-top: 1px solid #222; }
+        .chat-input input { flex-grow: 1; background: transparent; border: none; color: var(--pure-white); font-size: 0.9rem; outline: none; font-family: monospace; }
+        .chat-input button { background: var(--amg-tosca); border: none; color: var(--amg-black); padding: 8px 15px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+
+        @media screen and (max-width: 768px) {
+            .paddock-container { grid-template-columns: 1fr; grid-template-rows: auto 400px; padding: 10px; gap: 10px; overflow-y: auto; height: auto; min-height: calc(100vh - 60px); }
+            body { overflow-y: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">PADDOCK <span>TELEMETRY</span></div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="operator-tag" id="op-tag">OP_UNKNOWN</div>
+            <button class="btn-logout" onclick="logout()">Terminate</button>
+        </div>
+    </header>
+
+    <div class="paddock-container">
+        <!-- Telemetry Panel -->
+        <div class="panel">
+            <div class="panel-header">System Diagnostics</div>
+            <div class="telemetry-grid">
+                <div class="data-box active">
+                    <div class="data-label">Server Integrity</div>
+                    <div class="data-value" id="val-integrity">99.9<span>%</span></div>
+                </div>
+                <div class="data-box active">
+                    <div class="data-label">Network Latency</div>
+                    <div class="data-value" id="val-ping">12<span>ms</span></div>
+                </div>
+                <div class="data-box">
+                    <div class="data-label">Threats Blocked</div>
+                    <div class="data-value" id="val-threat">1,042</div>
+                </div>
+                <div class="data-box">
+                    <div class="data-label">Active Connections</div>
+                    <div class="data-value" id="val-conn">3</div>
+                </div>
+            </div>
+            
+            <div class="panel-header" style="border-top: 1px solid #222;">Recent Directives</div>
+            <div style="padding: 20px; font-family: monospace; font-size: 0.85rem; color: var(--amg-silver); line-height: 2;">
+                > [SYSTEM] Operator logged into secure sector.<br>
+                > [AUTO] Database link established: supabase.co.<br>
+                > [COMMS] Real-time encryption active.<br>
+                > [INFO] End of log.
+            </div>
+        </div>
+
+        <!-- Chat Panel -->
+        <div class="panel">
+            <div class="panel-header">Encrypted Comms (Live)</div>
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-box">
+                    <!-- Pesan akan masuk ke sini via Javascript -->
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chat-input" placeholder="Transmit message..." autocomplete="off">
+                    <button onclick="sendMessage()" id="btn-send">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Security Check: Kick user jika tidak ada session login
+        const activeOp = sessionStorage.getItem('activeOperator');
+        if (!activeOp) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('op-tag').innerText = `OP_${activeOp}`;
+        }
+
+        function logout() {
+            sessionStorage.removeItem('activeOperator');
+            window.location.href = 'index.html';
+        }
+
+        // ==========================================
+        // INISIASI MESIN SUPABASE (THE BACKEND)
+        // ==========================================
+        const supabaseUrl = 'https://gzvlwrwjofdvupvisvhr.supabase.co';
+        const supabaseKey = 'sb_publishable_mKKMN7ckQtsmMTiX2Ip2cA_rJALEnUB'; // Publishable Key (Aman ditaruh di sini)
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        const chatBox = document.getElementById('chat-box');
+
+        // Fungsi Render Pesan ke Layar
+        function renderMessage(msgData) {
+            const isSelf = msgData.operator_id === activeOp;
+            const msgDiv = document.createElement('div');
+            msgDiv.className = isSelf ? 'msg self' : 'msg';
+            
+            // Format waktu sederhana
+            const time = new Date(msgData.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            msgDiv.innerHTML = `
+                <div class="msg-header">${msgData.operator_id} | ${time}</div>
+                <div class="msg-body">${msgData.message}</div>
+            `;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // 1. Tarik History Chat Pas Baru Masuk Paddock
+        async function loadHistory() {
+            const { data, error } = await supabase
+                .from('paddock_comms')
+                .select('*')
+                .order('created_at', { ascending: true })
+                .limit(50); // Ambil 50 pesan terakhir
+
+            if (data) {
+                data.forEach(msg => renderMessage(msg));
+            }
+        }
+        loadHistory();
+
+        // 2. Kirim Pesan ke Database
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            const btnSend = document.getElementById('btn-send');
+
+            if (message !== "") {
+                input.value = ''; // Kosongin form
+                btnSend.disabled = true; // Cegah spam klik
+
+                const { error } = await supabase
+                    .from('paddock_comms')
+                    .insert([{ operator_id: activeOp, message: message }]);
+                
+                btnSend.disabled = false;
+                if(error) console.error("Transmission failed:", error);
+                // Gak perlu panggil renderMessage di sini, karena bakal di-handle sama Realtime Listener di bawah
+            }
+        }
+
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // 3. Listener Realtime (Kalau ada temen lu ngechat, otomatis muncul)
+        supabase
+            .channel('public:paddock_comms')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_comms' }, payload => {
+                renderMessage(payload.new);
+            })
+            .subscribe();
+
+        // ==========================================
+        // Animasi Telemetri Palsu (Biar Keren)
+        // ==========================================
+        setInterval(() => {
+            document.getElementById('val-ping').innerHTML = Math.floor(Math.random() * (18 - 8 + 1) + 8) + '<span>ms</span>';
+            if(Math.random() > 0.7) {
+                let threat = parseInt(document.getElementById('val-threat').innerText.replace(',', ''));
+                document.getElementById('val-threat').innerText = (threat + 1).toLocaleString();
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
