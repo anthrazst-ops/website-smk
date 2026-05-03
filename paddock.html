@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PADDOCK | CYBERSKALISKA</title>
     
-    <!-- GLOBAL ERROR TRAP: Nggak ada bug yang bisa sembunyi lagi -->
+    <!-- GLOBAL ERROR TRAP -->
     <script>
         window.onerror = function(msg, url, line) {
             alert("FATAL BUG DETECTED\nBaris: " + line + "\nError: " + msg);
@@ -20,8 +20,8 @@
         });
     </script>
 
-    <!-- CDN Supabase UMD Absolut -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- CDN Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&display=swap');
@@ -46,7 +46,8 @@
         #admin-panel { display: none; padding: 15px; background: #151515; border-bottom: 1px solid #222; }
         .admin-input-group { display: flex; gap: 10px; }
         .admin-input-group input { flex-grow: 1; background: transparent; border: 1px solid #333; color: white; padding: 8px; font-family: monospace; outline: none; }
-        .admin-input-group button { background: var(--pure-white); color: black; border: none; padding: 0 15px; font-weight: 800; cursor: pointer; }
+        .admin-input-group button { background: var(--pure-white); color: black; border: none; padding: 0 15px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .admin-input-group button:hover { background: var(--amg-tosca); }
 
         .log-box { flex-grow: 1; padding: 15px; font-family: monospace; font-size: 0.85rem; line-height: 1.6; overflow-y: auto; color: #aaa; }
         .log-item { margin-bottom: 8px; padding-left: 10px; border-left: 2px solid #333; }
@@ -55,7 +56,7 @@
         .chat-container { display: flex; flex-direction: column; height: 100%; }
         .chat-messages { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .msg { font-size: 0.85rem; max-width: 85%; }
-        .msg-body { background: #1a1a1a; padding: 10px; border-radius: 2px; border-left: 2px solid #555; }
+        .msg-body { background: #1a1a1a; padding: 10px; border-radius: 2px; border-left: 2px solid #555; word-wrap: break-word;}
         .msg.self { align-self: flex-end; }
         .msg.self .msg-body { border-left: none; border-right: 2px solid var(--amg-tosca); background: #111; }
         
@@ -122,14 +123,16 @@
 
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
 
-        // Murni logika Supabase tanpa nested functions yang rawan ngehang
+        // Pengecekan Library
         if (typeof window.supabase === 'undefined') {
             throw new Error("Library Supabase gagal dimuat dari CDN. Skrip terhenti.");
         }
 
         const URL = 'https://gzvlwrwjofdvupvisvhr.supabase.co';
         const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6dmx3cndqb2ZkdnVwdmlzdmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTU5OTksImV4cCI6MjA5MzI5MTk5OX0.1JSIGeJOtKqY41ZnJAwITwsJ_wx7QQnBv5XmfRZzcnQ';
-        const supabase = window.supabase.createClient(URL, KEY);
+        
+        // PERUBAHAN KRUSIAL: Variabel dinamakan 'db' biar gak bentrok sama library
+        const db = window.supabase.createClient(URL, KEY);
         const statusEl = document.getElementById('status-indicator');
 
         function renderChat(d) {
@@ -153,7 +156,7 @@
             const msg = el.value.trim();
             if(!msg) return;
             el.value = '';
-            const { error } = await supabase.from('paddock_comms').insert([{ operator_id: activeOp, message: msg }]);
+            const { error } = await db.from('paddock_comms').insert([{ operator_id: activeOp, message: msg }]);
             if(error) throw new Error(error.message);
         }
 
@@ -162,16 +165,16 @@
             const msg = el.value.trim();
             if(!msg) return;
             el.value = '';
-            const { error } = await supabase.from('paddock_directives').insert([{ message: msg }]);
+            const { error } = await db.from('paddock_directives').insert([{ message: msg }]);
             if(error) throw new Error(error.message);
         }
 
-        // Jalur eksekusi lurus (Linear Execution)
+        // Boot Sequence
         statusEl.innerText = "AUTHENTICATING DATABASE...";
         
         Promise.all([
-            supabase.from('paddock_comms').select('*').order('id', {ascending: true}).limit(30),
-            supabase.from('paddock_directives').select('*').order('id', {ascending: false}).limit(10)
+            db.from('paddock_comms').select('*').order('id', {ascending: true}).limit(30),
+            db.from('paddock_directives').select('*').order('id', {ascending: false}).limit(10)
         ]).then(([chats, dirs]) => {
             if (chats.error) throw new Error(chats.error.message);
             if (dirs.error) throw new Error(dirs.error.message);
@@ -179,7 +182,8 @@
             if(chats.data) chats.data.forEach(renderChat);
             if(dirs.data) dirs.data.forEach(renderDir);
 
-            supabase.channel('paddock_main')
+            // Realtime Listener
+            db.channel('paddock_main')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_comms' }, p => renderChat(p.new))
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_directives' }, p => renderDir(p.new))
                 .subscribe();
@@ -188,6 +192,7 @@
             statusEl.style.color = "#00A19C";
         });
 
+        // Aesthetic Tools
         setInterval(() => {
             const now = new Date();
             document.getElementById('utc-time').innerText = now.toUTCString().split(' ')[4] + ' UTC';
