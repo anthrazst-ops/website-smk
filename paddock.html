@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PADDOCK | CYBERSKALISKA</title>
     
-    <!-- GLOBAL ERROR TRAP -->
+    <!-- GLOBAL ERROR TRAP ADVANCED -->
     <script>
         window.onerror = function(msg, url, line) {
-            alert("FATAL BUG DETECTED\nBaris: " + line + "\nError: " + msg);
+            alert("FATAL BUG DETECTED\nBaris: " + line + "\nFile: " + url + "\nError: " + msg);
             document.getElementById('status-indicator').innerText = "SYSTEM DEAD";
             document.getElementById('status-indicator').style.color = "red";
             return false;
@@ -20,8 +20,8 @@
         });
     </script>
 
-    <!-- CDN Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- CDN Supabase dengan CrossOrigin untuk tembus blokir Baris 0 -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&display=swap');
@@ -123,15 +123,14 @@
 
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
 
-        // Pengecekan Library
+        // Pengecekan Library Mutlak
         if (typeof window.supabase === 'undefined') {
-            throw new Error("Library Supabase gagal dimuat dari CDN. Skrip terhenti.");
+            throw new Error("Jaringan lu ngeblokir library Supabase. Ganti koneksi atau matiin Adblock!");
         }
 
         const URL = 'https://gzvlwrwjofdvupvisvhr.supabase.co';
         const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6dmx3cndqb2ZkdnVwdmlzdmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTU5OTksImV4cCI6MjA5MzI5MTk5OX0.1JSIGeJOtKqY41ZnJAwITwsJ_wx7QQnBv5XmfRZzcnQ';
         
-        // PERUBAHAN KRUSIAL: Variabel dinamakan 'db' biar gak bentrok sama library
         const db = window.supabase.createClient(URL, KEY);
         const statusEl = document.getElementById('status-indicator');
 
