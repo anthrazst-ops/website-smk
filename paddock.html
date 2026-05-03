@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PADDOCK | CYBERSKALISKA</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- CDN diganti ke Unpkg yang lebih stabil untuk Vanilla JS -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&display=swap');
         :root { --amg-tosca: #00A19C; --amg-black: #000000; --amg-dark: #0D0D0D; --amg-panel: #111111; --amg-silver: #A2AAAD; --pure-white: #FFFFFF; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
         body { background-color: var(--amg-black); color: var(--pure-white); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        #error-overlay { position: fixed; top: 0; left: 0; width: 100%; background: #ff3333; color: white; padding: 10px; font-family: monospace; text-align: center; display: none; z-index: 10000; font-weight: bold; }
+        #error-overlay { position: fixed; top: 0; left: 0; width: 100%; background: #ff3333; color: white; padding: 15px; font-family: monospace; text-align: center; display: none; z-index: 10000; font-weight: bold; border-bottom: 2px solid #990000; }
         
         header { background: var(--amg-panel); height: 60px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 2px solid var(--amg-tosca); }
         .operator-tag { background: var(--pure-white); color: var(--amg-black); padding: 4px 10px; font-weight: 800; border-radius: 2px; text-transform: uppercase; }
@@ -52,7 +53,7 @@
 </head>
 <body>
 
-    <div id="error-overlay"></div>
+    <div id="error-overlay">SYSTEM FAILURE LOG</div>
 
     <header>
         <div style="font-weight: 900; letter-spacing: 2px; font-size: 1.3rem;">PADDOCK <span style="color:var(--amg-tosca)">PORTAL</span></div>
@@ -64,7 +65,6 @@
     </header>
 
     <div class="paddock-container">
-        
         <div class="panel">
             <div class="panel-header">
                 System Briefing
@@ -98,13 +98,14 @@
                 <button onclick="sendChat()" id="btn-send">SEND</button>
             </div>
         </div>
-
     </div>
 
     <script>
         const URL = 'https://gzvlwrwjofdvupvisvhr.supabase.co';
         const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6dmx3cndqb2ZkdnVwdmlzdmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTU5OTksImV4cCI6MjA5MzI5MTk5OX0.1JSIGeJOtKqY41ZnJAwITwsJ_wx7QQnBv5XmfRZzcnQ';
         
+        let supabase; // Deklarasi kosong dulu biar aman
+
         // 1. Session Guard
         const activeOp = sessionStorage.getItem('activeOperator');
         if (!activeOp) { window.location.href = 'login.html'; }
@@ -113,11 +114,9 @@
 
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
 
-        // 2. Initialize Supabase
-        const supabase = window.supabase.createClient(URL, KEY);
+        // 2. UI Helpers
         const statusEl = document.getElementById('status-indicator');
-
-        // 3. UI Helpers
+        
         function logError(msg) {
             const errEl = document.getElementById('error-overlay');
             errEl.style.display = 'block';
@@ -142,8 +141,9 @@
             box.insertBefore(div, box.children[1] || box.firstChild);
         }
 
-        // 4. Database Actions
+        // 3. Database Actions
         async function sendChat() {
+            if (!supabase) return;
             const el = document.getElementById('chat-input');
             const msg = el.value.trim();
             if(!msg) return;
@@ -153,6 +153,7 @@
         }
 
         async function sendDirective() {
+            if (!supabase) return;
             const el = document.getElementById('dir-input');
             const msg = el.value.trim();
             if(!msg) return;
@@ -161,19 +162,25 @@
             if(error) logError(error.message);
         }
 
-        // 5. Boot & Listeners
+        // 4. Boot & Listeners (DENGAN PELINDUNG MUTLAK)
         async function startup() {
             try {
-                // Change status immediately
-                statusEl.innerText = "ENCRYPTION ACTIVE";
-                statusEl.style.color = "#00A19C";
+                // Pengecekan krusial: Apakah Supabase berhasil di-download oleh browser?
+                if (typeof window.supabase === 'undefined') {
+                    throw new Error("Koneksi ditolak oleh browser/firewall. CDN Supabase gagal dimuat.");
+                }
+
+                // Inisiasi Supabase dengan aman
+                supabase = window.supabase.createClient(URL, KEY);
 
                 // Load initial data
-                const { data: c } = await supabase.from('paddock_comms').select('*').order('id', {ascending: true}).limit(30);
-                if(c) c.forEach(renderChat);
+                const { data: c, error: errC } = await supabase.from('paddock_comms').select('*').order('id', {ascending: true}).limit(30);
+                if (errC) throw new Error("Gagal menarik chat: " + errC.message);
+                if (c) c.forEach(renderChat);
 
-                const { data: d } = await supabase.from('paddock_directives').select('*').order('id', {ascending: false}).limit(10);
-                if(d) d.forEach(renderDir);
+                const { data: d, error: errD } = await supabase.from('paddock_directives').select('*').order('id', {ascending: false}).limit(10);
+                if (errD) throw new Error("Gagal menarik pengumuman: " + errD.message);
+                if (d) d.forEach(renderDir);
 
                 // Realtime Subscriptions
                 supabase.channel('paddock_main')
@@ -181,14 +188,19 @@
                     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_directives' }, p => renderDir(p.new))
                     .subscribe();
 
+                // Kalau sampai sini tanpa error, berarti nyala mutlak
+                statusEl.innerText = "ENCRYPTION ACTIVE";
+                statusEl.style.color = "#00A19C";
+
             } catch (e) {
                 logError(e.message);
             }
         }
 
+        // Jalankan mesin utama
         startup();
 
-        // 6. Aesthetic Tools
+        // 5. Aesthetic Tools
         setInterval(() => {
             const now = new Date();
             document.getElementById('utc-time').innerText = now.toUTCString().split(' ')[4] + ' UTC';
