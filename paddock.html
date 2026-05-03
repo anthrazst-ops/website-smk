@@ -4,15 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PADDOCK | CYBERSKALISKA</title>
-    <!-- CDN diganti ke Unpkg yang lebih stabil untuk Vanilla JS -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- GLOBAL ERROR TRAP: Nggak ada bug yang bisa sembunyi lagi -->
+    <script>
+        window.onerror = function(msg, url, line) {
+            alert("FATAL BUG DETECTED\nBaris: " + line + "\nError: " + msg);
+            document.getElementById('status-indicator').innerText = "SYSTEM DEAD";
+            document.getElementById('status-indicator').style.color = "red";
+            return false;
+        };
+        window.addEventListener('unhandledrejection', function(e) {
+            alert("NETWORK/PROMISE REJECTED\nError: " + (e.reason.message || e.reason));
+            document.getElementById('status-indicator').innerText = "CONNECTION DEAD";
+            document.getElementById('status-indicator').style.color = "red";
+        });
+    </script>
+
+    <!-- CDN Supabase UMD Absolut -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&display=swap');
         :root { --amg-tosca: #00A19C; --amg-black: #000000; --amg-dark: #0D0D0D; --amg-panel: #111111; --amg-silver: #A2AAAD; --pure-white: #FFFFFF; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
         body { background-color: var(--amg-black); color: var(--pure-white); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        
-        #error-overlay { position: fixed; top: 0; left: 0; width: 100%; background: #ff3333; color: white; padding: 15px; font-family: monospace; text-align: center; display: none; z-index: 10000; font-weight: bold; border-bottom: 2px solid #990000; }
         
         header { background: var(--amg-panel); height: 60px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 2px solid var(--amg-tosca); }
         .operator-tag { background: var(--pure-white); color: var(--amg-black); padding: 4px 10px; font-weight: 800; border-radius: 2px; text-transform: uppercase; }
@@ -53,8 +68,6 @@
 </head>
 <body>
 
-    <div id="error-overlay">SYSTEM FAILURE LOG</div>
-
     <header>
         <div style="font-weight: 900; letter-spacing: 2px; font-size: 1.3rem;">PADDOCK <span style="color:var(--amg-tosca)">PORTAL</span></div>
         <div style="display: flex; align-items: center; gap: 20px;">
@@ -68,7 +81,7 @@
         <div class="panel">
             <div class="panel-header">
                 System Briefing
-                <span id="status-indicator">SIGNAL SEARCHING...</span>
+                <span id="status-indicator">ENGINE INITIATION...</span>
             </div>
             
             <div class="telemetry-bar">
@@ -101,29 +114,23 @@
     </div>
 
     <script>
-        const URL = 'https://gzvlwrwjofdvupvisvhr.supabase.co';
-        const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6dmx3cndqb2ZkdnVwdmlzdmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTU5OTksImV4cCI6MjA5MzI5MTk5OX0.1JSIGeJOtKqY41ZnJAwITwsJ_wx7QQnBv5XmfRZzcnQ';
-        
-        let supabase; // Deklarasi kosong dulu biar aman
-
-        // 1. Session Guard
         const activeOp = sessionStorage.getItem('activeOperator');
-        if (!activeOp) { window.location.href = 'login.html'; }
+        if (!activeOp) window.location.href = 'login.html';
+        
         document.getElementById('op-tag').innerText = activeOp;
         if (activeOp === 'OPS01') document.getElementById('admin-panel').style.display = 'block';
 
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
 
-        // 2. UI Helpers
-        const statusEl = document.getElementById('status-indicator');
-        
-        function logError(msg) {
-            const errEl = document.getElementById('error-overlay');
-            errEl.style.display = 'block';
-            errEl.innerText = "CRITICAL ERROR: " + msg;
-            statusEl.innerText = "SYSTEM OFFLINE";
-            statusEl.style.color = "#ff3333";
+        // Murni logika Supabase tanpa nested functions yang rawan ngehang
+        if (typeof window.supabase === 'undefined') {
+            throw new Error("Library Supabase gagal dimuat dari CDN. Skrip terhenti.");
         }
+
+        const URL = 'https://gzvlwrwjofdvupvisvhr.supabase.co';
+        const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6dmx3cndqb2ZkdnVwdmlzdmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTU5OTksImV4cCI6MjA5MzI5MTk5OX0.1JSIGeJOtKqY41ZnJAwITwsJ_wx7QQnBv5XmfRZzcnQ';
+        const supabase = window.supabase.createClient(URL, KEY);
+        const statusEl = document.getElementById('status-indicator');
 
         function renderChat(d) {
             const box = document.getElementById('chat-box');
@@ -141,66 +148,46 @@
             box.insertBefore(div, box.children[1] || box.firstChild);
         }
 
-        // 3. Database Actions
         async function sendChat() {
-            if (!supabase) return;
             const el = document.getElementById('chat-input');
             const msg = el.value.trim();
             if(!msg) return;
             el.value = '';
             const { error } = await supabase.from('paddock_comms').insert([{ operator_id: activeOp, message: msg }]);
-            if(error) logError(error.message);
+            if(error) throw new Error(error.message);
         }
 
         async function sendDirective() {
-            if (!supabase) return;
             const el = document.getElementById('dir-input');
             const msg = el.value.trim();
             if(!msg) return;
             el.value = '';
             const { error } = await supabase.from('paddock_directives').insert([{ message: msg }]);
-            if(error) logError(error.message);
+            if(error) throw new Error(error.message);
         }
 
-        // 4. Boot & Listeners (DENGAN PELINDUNG MUTLAK)
-        async function startup() {
-            try {
-                // Pengecekan krusial: Apakah Supabase berhasil di-download oleh browser?
-                if (typeof window.supabase === 'undefined') {
-                    throw new Error("Koneksi ditolak oleh browser/firewall. CDN Supabase gagal dimuat.");
-                }
+        // Jalur eksekusi lurus (Linear Execution)
+        statusEl.innerText = "AUTHENTICATING DATABASE...";
+        
+        Promise.all([
+            supabase.from('paddock_comms').select('*').order('id', {ascending: true}).limit(30),
+            supabase.from('paddock_directives').select('*').order('id', {ascending: false}).limit(10)
+        ]).then(([chats, dirs]) => {
+            if (chats.error) throw new Error(chats.error.message);
+            if (dirs.error) throw new Error(dirs.error.message);
+            
+            if(chats.data) chats.data.forEach(renderChat);
+            if(dirs.data) dirs.data.forEach(renderDir);
 
-                // Inisiasi Supabase dengan aman
-                supabase = window.supabase.createClient(URL, KEY);
+            supabase.channel('paddock_main')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_comms' }, p => renderChat(p.new))
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_directives' }, p => renderDir(p.new))
+                .subscribe();
 
-                // Load initial data
-                const { data: c, error: errC } = await supabase.from('paddock_comms').select('*').order('id', {ascending: true}).limit(30);
-                if (errC) throw new Error("Gagal menarik chat: " + errC.message);
-                if (c) c.forEach(renderChat);
+            statusEl.innerText = "ENCRYPTION ACTIVE";
+            statusEl.style.color = "#00A19C";
+        });
 
-                const { data: d, error: errD } = await supabase.from('paddock_directives').select('*').order('id', {ascending: false}).limit(10);
-                if (errD) throw new Error("Gagal menarik pengumuman: " + errD.message);
-                if (d) d.forEach(renderDir);
-
-                // Realtime Subscriptions
-                supabase.channel('paddock_main')
-                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_comms' }, p => renderChat(p.new))
-                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_directives' }, p => renderDir(p.new))
-                    .subscribe();
-
-                // Kalau sampai sini tanpa error, berarti nyala mutlak
-                statusEl.innerText = "ENCRYPTION ACTIVE";
-                statusEl.style.color = "#00A19C";
-
-            } catch (e) {
-                logError(e.message);
-            }
-        }
-
-        // Jalankan mesin utama
-        startup();
-
-        // 5. Aesthetic Tools
         setInterval(() => {
             const now = new Date();
             document.getElementById('utc-time').innerText = now.toUTCString().split(' ')[4] + ' UTC';
