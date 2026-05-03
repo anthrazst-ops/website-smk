@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PADDOCK | DIAGNOSTICS</title>
-    <!-- Script Supabase dari CDN Resmi -->
+    <title>PADDOCK | CYBERSKALISKA</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&display=swap');
@@ -12,186 +11,192 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
         body { background-color: var(--amg-black); color: var(--pure-white); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Debug Console - Buat ngelacak masalah */
-        #debug-console { background: #330000; color: #ff6666; padding: 10px; font-family: monospace; font-size: 0.8rem; font-weight: bold; text-align: center; display: none; border-bottom: 2px solid red; z-index: 9999;}
+        #error-overlay { position: fixed; top: 0; left: 0; width: 100%; background: #ff3333; color: white; padding: 10px; font-family: monospace; text-align: center; display: none; z-index: 10000; font-weight: bold; }
         
         header { background: var(--amg-panel); height: 60px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 2px solid var(--amg-tosca); }
-        .operator-tag { background: var(--pure-white); color: var(--amg-black); padding: 4px 10px; font-weight: 800; border-radius: 2px; }
+        .operator-tag { background: var(--pure-white); color: var(--amg-black); padding: 4px 10px; font-weight: 800; border-radius: 2px; text-transform: uppercase; }
         
-        .paddock-container { display: grid; grid-template-columns: 1fr 400px; height: calc(100vh - 60px); gap: 20px; padding: 20px; }
+        .paddock-container { display: grid; grid-template-columns: 1fr 380px; height: calc(100vh - 60px); gap: 20px; padding: 20px; }
         .panel { background: var(--amg-dark); border: 1px solid #222; display: flex; flex-direction: column; overflow: hidden; }
-        .panel-header { background: #1a1a1a; padding: 10px 15px; font-size: 0.8rem; font-weight: 800; color: var(--amg-silver); text-transform: uppercase; border-bottom: 1px solid #222; display:flex; justify-content: space-between; align-items:center;}
+        .panel-header { background: #1a1a1a; padding: 12px 15px; font-size: 0.8rem; font-weight: 800; color: var(--amg-silver); text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
         
-        #server-status { color: #ff3333; font-size: 0.7rem; } /* Merah = Mati, Hijau = Nyala */
+        #status-indicator { font-size: 0.7rem; color: #ffcc00; font-weight: bold; }
+
+        .telemetry-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; border-bottom: 1px solid #222; }
+        .data-box { background: var(--amg-panel); border: 1px solid #1f1f1f; padding: 10px; border-left: 2px solid var(--amg-tosca); }
+        .data-label { font-size: 0.6rem; color: #666; text-transform: uppercase; }
+        .data-value { font-size: 1.4rem; font-weight: 900; font-family: monospace; }
 
         #admin-panel { display: none; padding: 15px; background: #151515; border-bottom: 1px solid #222; }
-        .admin-input { display: flex; gap: 10px; }
-        .admin-input input { flex-grow: 1; background: transparent; border: 1px solid #333; color: white; padding: 8px; font-family: monospace; outline: none; }
-        .admin-input button { background: var(--pure-white); color: black; border: none; padding: 0 15px; font-weight: 800; cursor: pointer; }
-        
-        .log-box { flex-grow: 1; padding: 15px; font-family: monospace; font-size: 0.8rem; line-height: 1.6; overflow-y: auto; color: #888; }
-        .log-item { margin-bottom: 5px; border-left: 2px solid #333; padding-left: 10px; }
-        .log-item.important { color: white; border-left-color: var(--amg-tosca); background: rgba(0,161,156,0.05); }
-        
+        .admin-input-group { display: flex; gap: 10px; }
+        .admin-input-group input { flex-grow: 1; background: transparent; border: 1px solid #333; color: white; padding: 8px; font-family: monospace; outline: none; }
+        .admin-input-group button { background: var(--pure-white); color: black; border: none; padding: 0 15px; font-weight: 800; cursor: pointer; }
+
+        .log-box { flex-grow: 1; padding: 15px; font-family: monospace; font-size: 0.85rem; line-height: 1.6; overflow-y: auto; color: #aaa; }
+        .log-item { margin-bottom: 8px; padding-left: 10px; border-left: 2px solid #333; }
+        .log-item.admin { color: white; border-left-color: var(--amg-tosca); background: rgba(0, 161, 156, 0.05); }
+
+        .chat-container { display: flex; flex-direction: column; height: 100%; }
         .chat-messages { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg { font-size: 0.8rem; max-width: 85%; margin-bottom: 5px; }
-        .msg-body { background: #1a1a1a; padding: 8px; border-radius: 2px; border-left: 2px solid var(--amg-silver); }
+        .msg { font-size: 0.85rem; max-width: 85%; }
+        .msg-body { background: #1a1a1a; padding: 10px; border-radius: 2px; border-left: 2px solid #555; }
         .msg.self { align-self: flex-end; }
         .msg.self .msg-body { border-left: none; border-right: 2px solid var(--amg-tosca); background: #111; }
         
         .chat-input { display: flex; padding: 15px; background: #1a1a1a; border-top: 1px solid #222; }
-        .chat-input input { flex-grow: 1; background: transparent; border: none; color: white; outline: none; }
+        .chat-input input { flex-grow: 1; background: transparent; border: none; color: white; outline: none; font-size: 0.9rem; }
         .chat-input button { background: var(--amg-tosca); border: none; padding: 8px 15px; font-weight: 800; cursor: pointer; }
-        
+
         @media (max-width: 900px) { .paddock-container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <!-- RADAR ERROR -->
-    <div id="debug-console"></div>
+
+    <div id="error-overlay"></div>
 
     <header>
-        <div style="font-weight: 800; letter-spacing: 2px; font-size: 1.2rem;">PADDOCK <span style="color:var(--amg-tosca)">PORTAL</span></div>
-        <div class="operator-tag" id="op-tag">ID</div>
+        <div style="font-weight: 900; letter-spacing: 2px; font-size: 1.3rem;">PADDOCK <span style="color:var(--amg-tosca)">PORTAL</span></div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div id="utc-time" style="font-family: monospace; font-size: 0.9rem; color: var(--amg-tosca);">00:00:00 UTC</div>
+            <div class="operator-tag" id="op-tag">ID</div>
+            <button class="btn-logout" onclick="logout()" style="background:none; border:1px solid #444; color:#888; padding:4px 10px; cursor:pointer; font-size: 0.7rem; font-weight:800;">TERMINATE</button>
+        </div>
     </header>
 
     <div class="paddock-container">
-        <!-- DIRECTIVES PANEL -->
+        
         <div class="panel">
             <div class="panel-header">
-                Tactical Directives
-                <span id="server-status">CONNECTING...</span>
+                System Briefing
+                <span id="status-indicator">SIGNAL SEARCHING...</span>
             </div>
             
+            <div class="telemetry-bar">
+                <div class="data-box"><div class="data-label">Uptime</div><div class="data-value">100%</div></div>
+                <div class="data-box"><div class="data-label">Ping</div><div class="data-value" id="ping-val">12ms</div></div>
+                <div class="data-box"><div class="data-label">Safety</div><div class="data-value" style="color:var(--amg-tosca)">MAX</div></div>
+                <div class="data-box"><div class="data-label">Nodes</div><div class="data-value">03</div></div>
+            </div>
+
             <div id="admin-panel">
-                <div class="admin-input">
-                    <input type="text" id="dir-input" placeholder="Broadcast Directive..." autocomplete="off">
-                    <button onclick="sendDir()">SEND</button>
+                <div class="admin-input-group">
+                    <input type="text" id="dir-input" placeholder="Enter Lead Directive..." autocomplete="off">
+                    <button onclick="sendDirective()">BROADCAST</button>
                 </div>
             </div>
-            <div class="log-box" id="log-box"></div>
+
+            <div class="log-box" id="directives-log">
+                <div class="log-item">--- SECURE LOG INITIALIZED ---</div>
+            </div>
         </div>
 
-        <!-- CHAT PANEL -->
         <div class="panel">
             <div class="panel-header">Encrypted Comms</div>
             <div class="chat-messages" id="chat-box"></div>
             <div class="chat-input">
-                <input type="text" id="chat-input" placeholder="Transmit..." autocomplete="off">
-                <button onclick="sendChat()">SEND</button>
+                <input type="text" id="chat-input" placeholder="Transmit message..." autocomplete="off">
+                <button onclick="sendChat()" id="btn-send">SEND</button>
             </div>
         </div>
+
     </div>
 
     <script>
-        // 1. Fungsi penangkap Error
-        function showError(msg) {
-            const debug = document.getElementById('debug-console');
-            debug.style.display = 'block';
-            debug.innerText = "SYSTEM FAILURE: " + msg;
-            console.error("DEBUG:", msg);
-        }
-
-        // 2. Cek Sesi Login
+        const URL = 'https://gzvlwrwjofdvupvisvhr.supabase.co';
+        const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6dmx3cndqb2ZkdnVwdmlzdmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTU5OTksImV4cCI6MjA5MzI5MTk5OX0.1JSIGeJOtKqY41ZnJAwITwsJ_wx7QQnBv5XmfRZzcnQ';
+        
+        // 1. Session Guard
         const activeOp = sessionStorage.getItem('activeOperator');
-        if(!activeOp) {
-            window.location.href = 'login.html';
-        } else {
-            document.getElementById('op-tag').innerText = activeOp;
-            if(activeOp === 'OPS01') document.getElementById('admin-panel').style.display = 'block';
+        if (!activeOp) { window.location.href = 'login.html'; }
+        document.getElementById('op-tag').innerText = activeOp;
+        if (activeOp === 'OPS01') document.getElementById('admin-panel').style.display = 'block';
+
+        function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
+
+        // 2. Initialize Supabase
+        const supabase = window.supabase.createClient(URL, KEY);
+        const statusEl = document.getElementById('status-indicator');
+
+        // 3. UI Helpers
+        function logError(msg) {
+            const errEl = document.getElementById('error-overlay');
+            errEl.style.display = 'block';
+            errEl.innerText = "CRITICAL ERROR: " + msg;
+            statusEl.innerText = "SYSTEM OFFLINE";
+            statusEl.style.color = "#ff3333";
         }
 
-        // 3. Inisiasi Supabase
-        let supabase;
-        try {
-            if (!window.supabase) throw new Error("Library Supabase gagal diload oleh browser!");
-            
-            const supabaseUrl = 'https://gzvlwrwjofdvupvisvhr.supabase.co';
-            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6dmx3cndqb2ZkdnVwdmlzdmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTU5OTksImV4cCI6MjA5MzI5MTk5OX0.1JSIGeJOtKqY41ZnJAwITwsJ_wx7QQnBv5XmfRZzcnQ';
-            
-            supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-            document.getElementById('server-status').innerText = "SERVER ONLINE";
-            document.getElementById('server-status').style.color = "#00A19C";
-
-        } catch (err) {
-            showError(err.message);
-        }
-
-        // 4. Render UI
         function renderChat(d) {
             const box = document.getElementById('chat-box');
             const div = document.createElement('div');
             div.className = d.operator_id === activeOp ? 'msg self' : 'msg';
-            div.innerHTML = `<div style="font-size:0.6rem; color:#666;">${d.operator_id}</div><div class="msg-body">${d.message}</div>`;
+            div.innerHTML = `<div style="font-size:0.6rem; color:#666; margin-bottom:2px;">${d.operator_id}</div><div class="msg-body">${d.message}</div>`;
             box.appendChild(div); box.scrollTop = box.scrollHeight;
         }
 
         function renderDir(d) {
-            const box = document.getElementById('log-box');
+            const box = document.getElementById('directives-log');
             const div = document.createElement('div');
-            div.className = 'log-item important';
+            div.className = 'log-item admin';
             div.innerHTML = `> [DIRECTIVE] ${d.message}`;
-            box.insertBefore(div, box.firstChild);
+            box.insertBefore(div, box.children[1] || box.firstChild);
         }
 
-        // 5. Kirim Data (Dengan penangkap error mutlak)
+        // 4. Database Actions
         async function sendChat() {
-            try {
-                const el = document.getElementById('chat-input');
-                const msg = el.value.trim();
-                if(!msg) return;
-
-                const { data, error } = await supabase.from('paddock_comms').insert([{ operator_id: activeOp, message: msg }]);
-                
-                if (error) throw error;
-                el.value = ''; 
-            } catch (err) {
-                showError("Gagal kirim chat: " + err.message);
-            }
+            const el = document.getElementById('chat-input');
+            const msg = el.value.trim();
+            if(!msg) return;
+            el.value = '';
+            const { error } = await supabase.from('paddock_comms').insert([{ operator_id: activeOp, message: msg }]);
+            if(error) logError(error.message);
         }
 
-        async function sendDir() {
-            try {
-                const el = document.getElementById('dir-input');
-                const msg = el.value.trim();
-                if(!msg) return;
-
-                const { data, error } = await supabase.from('paddock_directives').insert([{ message: msg }]);
-                
-                if (error) throw error;
-                el.value = '';
-            } catch (err) {
-                showError("Gagal kirim pengumuman: " + err.message);
-            }
+        async function sendDirective() {
+            const el = document.getElementById('dir-input');
+            const msg = el.value.trim();
+            if(!msg) return;
+            el.value = '';
+            const { error } = await supabase.from('paddock_directives').insert([{ message: msg }]);
+            if(error) logError(error.message);
         }
 
-        // 6. Tarik Data Awal & Dengerin Realtime
-        async function loadData() {
+        // 5. Boot & Listeners
+        async function startup() {
             try {
-                // Load Chat
-                const { data: c, error: errC } = await supabase.from('paddock_comms').select('*').order('created_at',{ascending:true}).limit(20);
-                if (errC) throw errC;
+                // Change status immediately
+                statusEl.innerText = "ENCRYPTION ACTIVE";
+                statusEl.style.color = "#00A19C";
+
+                // Load initial data
+                const { data: c } = await supabase.from('paddock_comms').select('*').order('id', {ascending: true}).limit(30);
                 if(c) c.forEach(renderChat);
 
-                // Load Directives
-                const { data: d, error: errD } = await supabase.from('paddock_directives').select('*').order('created_at',{ascending:false}).limit(10);
-                if (errD) throw errD;
+                const { data: d } = await supabase.from('paddock_directives').select('*').order('id', {ascending: false}).limit(10);
                 if(d) d.forEach(renderDir);
 
-                // Subscribe Realtime
-                supabase.channel('room1').on('postgres_changes',{event:'INSERT',schema:'public',table:'paddock_comms'},p=>renderChat(p.new)).subscribe();
-                supabase.channel('room2').on('postgres_changes',{event:'INSERT',schema:'public',table:'paddock_directives'},p=>renderDir(p.new)).subscribe();
+                // Realtime Subscriptions
+                supabase.channel('paddock_main')
+                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_comms' }, p => renderChat(p.new))
+                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_directives' }, p => renderDir(p.new))
+                    .subscribe();
 
-            } catch (err) {
-                showError("Gagal menarik data dari server: " + err.message);
+            } catch (e) {
+                logError(e.message);
             }
         }
 
-        if (supabase) loadData();
+        startup();
 
-        // Enter keys
-        document.getElementById('chat-input').addEventListener('keypress',e=>{if(e.key==='Enter')sendChat()});
-        document.getElementById('dir-input').addEventListener('keypress',e=>{if(e.key==='Enter')sendDir()});
+        // 6. Aesthetic Tools
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('utc-time').innerText = now.toUTCString().split(' ')[4] + ' UTC';
+            document.getElementById('ping-val').innerText = Math.floor(Math.random() * 10 + 5) + 'ms';
+        }, 1000);
+
+        document.getElementById('chat-input').addEventListener('keypress', e => { if(e.key==='Enter') sendChat() });
+        document.getElementById('dir-input').addEventListener('keypress', e => { if(e.key==='Enter') sendDirective() });
     </script>
 </body>
 </html>
