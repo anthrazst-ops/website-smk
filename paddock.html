@@ -30,6 +30,10 @@
         .admin-input-group input { flex-grow: 1; background: transparent; border: 1px solid #333; color: white; padding: 8px; font-family: monospace; outline: none; }
         .admin-input-group button { background: var(--pure-white); color: black; border: none; padding: 0 15px; font-weight: 800; cursor: pointer; transition: 0.2s; }
         .admin-input-group button:hover { background: var(--amg-tosca); }
+        
+        /* Tombol Nuke Khusus Admin */
+        .btn-nuke { width: 100%; margin-top: 10px; padding: 8px; background: #660000; color: #ffcccc; border: 1px solid #ff3333; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
+        .btn-nuke:hover { background: #ff3333; color: white; box-shadow: 0 0 15px rgba(255, 51, 51, 0.5); }
 
         .log-box { flex-grow: 1; padding: 15px; font-family: monospace; font-size: 0.85rem; line-height: 1.6; overflow-y: auto; color: #aaa; }
         .log-item { margin-bottom: 8px; padding-left: 10px; border-left: 2px solid #333; }
@@ -79,6 +83,8 @@
                     <input type="text" id="dir-input" placeholder="Enter Lead Directive..." autocomplete="off">
                     <button onclick="sendDirective()">BROADCAST</button>
                 </div>
+                <!-- TOMBOL NUKE KHUSUS ADMIN -->
+                <button class="btn-nuke" onclick="clearLogs()">Nuke Database</button>
             </div>
 
             <div class="log-box" id="directives-log">
@@ -97,12 +103,16 @@
     </div>
 
     <script>
-        // 1. SESSION GUARD
+        // 1. SESSION GUARD & ADMIN CHECK
         const activeOp = sessionStorage.getItem('activeOperator');
         if (!activeOp) window.location.href = 'login.html';
         
         document.getElementById('op-tag').innerText = activeOp;
-        if (activeOp === 'OPS01') document.getElementById('admin-panel').style.display = 'block';
+        
+        // Cuma OPS01 yang panel admin-nya dibuka
+        if (activeOp === 'OPS01') {
+            document.getElementById('admin-panel').style.display = 'block';
+        }
 
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
 
@@ -138,7 +148,39 @@
             box.insertBefore(div, box.children[1] || box.firstChild);
         }
 
-        // 4. PENGIRIMAN MURNI (POST)
+        // 4. PROTOKOL NUKE DATABASE (HANYA ADMIN)
+        async function clearLogs() {
+            // Lapis keamanan 2: Kalau bukan OPS01, batalkan
+            if (activeOp !== 'OPS01') return;
+
+            // Konfirmasi biar ga kepencet ga sengaja
+            const confirmNuke = confirm("AUTHORIZATION REQUIRED:\nLanjutkan protokol pemusnahan? Semua data chat dan pengumuman akan dihapus permanen.");
+            
+            if (confirmNuke) {
+                try {
+                    statusEl.innerText = "PURGING DATA...";
+                    statusEl.style.color = "red";
+
+                    // Hapus semua data yang ID-nya lebih dari 0
+                    await fetch(`${API_URL}/paddock_comms?id=gt.0`, { method: 'DELETE', headers: HEADERS });
+                    await fetch(`${API_URL}/paddock_directives?id=gt.0`, { method: 'DELETE', headers: HEADERS });
+
+                    // Bersihkan UI langsung
+                    document.getElementById('chat-box').innerHTML = '';
+                    document.getElementById('directives-log').innerHTML = '<div class="log-item">--- SECURE LOG INITIALIZED ---</div>';
+                    lastChatId = 0;
+                    lastDirId = 0;
+
+                    statusEl.innerText = "SECURE LINK ACTIVE";
+                    statusEl.style.color = "#00A19C";
+                    alert("DATABASE BERHASIL DIBERSIHKAN.");
+                } catch (err) {
+                    alert("GAGAL MENGHAPUS DATA: " + err.message);
+                }
+            }
+        }
+
+        // 5. PENGIRIMAN MURNI (POST)
         async function sendChat() {
             const el = document.getElementById('chat-input');
             const msg = el.value.trim();
@@ -147,7 +189,7 @@
             
             const payload = { operator_id: activeOp, message: msg };
             await fetch(API_URL + '/paddock_comms', { method: 'POST', headers: HEADERS, body: JSON.stringify(payload) });
-            pollData(); // Langsung refresh abis ngirim
+            pollData(); 
         }
 
         async function sendDirective() {
@@ -161,10 +203,9 @@
             pollData();
         }
 
-        // 5. PENARIKAN DATA (GET) DENGAN SISTEM POLLING
+        // 6. PENARIKAN DATA (GET) DENGAN SISTEM POLLING
         async function pollData() {
             try {
-                // Tarik Chat Baru
                 const chatRes = await fetch(`${API_URL}/paddock_comms?select=*&id=gt.${lastChatId}&order=id.asc`, { headers: HEADERS });
                 if(chatRes.ok) {
                     const chats = await chatRes.json();
@@ -174,7 +215,6 @@
                     }
                 }
 
-                // Tarik Directive Baru
                 const dirRes = await fetch(`${API_URL}/paddock_directives?select=*&id=gt.${lastDirId}&order=id.asc`, { headers: HEADERS });
                 if(dirRes.ok) {
                     const dirs = await dirRes.json();
@@ -192,11 +232,10 @@
             }
         }
 
-        // 6. ENGINE START
+        // 7. ENGINE START
         async function bootSequence() {
             statusEl.innerText = "ESTABLISHING LINK...";
             
-            // Initial Load (Ambil history terakhir)
             try {
                 const chatRes = await fetch(`${API_URL}/paddock_comms?select=*&order=id.desc&limit=20`, { headers: HEADERS });
                 if(chatRes.ok) {
@@ -215,7 +254,6 @@
                 statusEl.innerText = "SECURE LINK ACTIVE";
                 statusEl.style.color = "#00A19C";
 
-                // Polling setiap 3 detik gantiin WebSocket
                 setInterval(pollData, 3000);
 
             } catch (err) {
@@ -226,7 +264,7 @@
 
         bootSequence();
 
-        // 7. AESTHETICS
+        // 8. AESTHETICS
         setInterval(() => {
             const now = new Date();
             document.getElementById('utc-time').innerText = now.toUTCString().split(' ')[4] + ' UTC';
