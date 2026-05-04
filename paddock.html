@@ -3,271 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PADDOCK | CYBERSKALISKA</title>
-    
+    <title>PADDOCK OS | CYBERSKALISKA</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&display=swap');
-        :root { --amg-tosca: #00A19C; --amg-black: #000000; --amg-dark: #0D0D0D; --amg-panel: #111111; --amg-silver: #A2AAAD; --pure-white: #FFFFFF; }
+        :root { --amg-tosca: #00A19C; --bg-main: #0a0a0a; --bg-panel: #111; --bg-sidebar: #050505; --text-main: #fff; --text-muted: #888; --border-color: #222; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
-        body { background-color: var(--amg-black); color: var(--pure-white); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
         
-        header { background: var(--amg-panel); height: 60px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 2px solid var(--amg-tosca); }
-        .operator-tag { background: var(--pure-white); color: var(--amg-black); padding: 4px 10px; font-weight: 800; border-radius: 2px; text-transform: uppercase; }
+        /* 1. SIDEBAR (Kiri) */
+        .sidebar { width: 250px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .brand-header { height: 60px; display: flex; align-items: center; padding: 0 20px; font-weight: 900; font-size: 1.2rem; border-bottom: 2px solid var(--amg-tosca); letter-spacing: 2px;}
+        .brand-header span { color: var(--amg-tosca); }
         
-        .paddock-container { display: grid; grid-template-columns: 1fr 380px; height: calc(100vh - 60px); gap: 20px; padding: 20px; }
-        .panel { background: var(--amg-dark); border: 1px solid #222; display: flex; flex-direction: column; overflow: hidden; }
-        .panel-header { background: #1a1a1a; padding: 12px 15px; font-size: 0.8rem; font-weight: 800; color: var(--amg-silver); text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .nav-section { flex-grow: 1; padding: 15px 10px; overflow-y: auto; }
+        .nav-title { font-size: 0.65rem; color: var(--text-muted); font-weight: 800; letter-spacing: 2px; margin-bottom: 10px; padding-left: 10px; }
+        .channel-btn { width: 100%; text-align: left; background: transparent; border: none; color: var(--text-muted); padding: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-radius: 4px; transition: 0.2s; margin-bottom: 5px; }
+        .channel-btn:hover { background: #1a1a1a; color: white; }
+        .channel-btn.active { background: rgba(0, 161, 156, 0.1); color: var(--amg-tosca); border-left: 3px solid var(--amg-tosca); }
+        .channel-btn::before { content: '# '; opacity: 0.5; }
+
+        .user-profile { background: #000; padding: 15px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .user-info { display: flex; flex-direction: column; }
+        .u-id { font-weight: 800; font-size: 1rem; }
+        .u-role { font-size: 0.65rem; color: var(--amg-tosca); font-weight: bold; }
+        .btn-logout { background: #222; color: white; border: none; padding: 5px 10px; cursor: pointer; font-weight: bold; border-radius: 4px; transition: 0.2s;}
+        .btn-logout:hover { background: red; }
+
+        /* 2. WORKSPACE (Tengah) */
+        .workspace { flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-main); position: relative; }
+        .ws-header { height: 60px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; padding: 0 20px; font-weight: 800; color: var(--text-muted); background: var(--bg-panel);}
+        .view-panel { display: none; flex-direction: column; height: calc(100vh - 60px); }
+        .view-panel.active { display: flex; }
         
-        #status-indicator { font-size: 0.75rem; color: #ffcc00; font-weight: bold; font-family: monospace; }
-
-        .telemetry-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; border-bottom: 1px solid #222; }
-        .data-box { background: var(--amg-panel); border: 1px solid #1f1f1f; padding: 10px; border-left: 2px solid var(--amg-tosca); }
-        .data-label { font-size: 0.6rem; color: #666; text-transform: uppercase; }
-        .data-value { font-size: 1.4rem; font-weight: 900; font-family: monospace; }
-
-        #admin-panel { display: none; padding: 15px; background: #151515; border-bottom: 1px solid #222; }
-        .admin-input-group { display: flex; gap: 10px; }
-        .admin-input-group input { flex-grow: 1; background: transparent; border: 1px solid #333; color: white; padding: 8px; font-family: monospace; outline: none; }
-        .admin-input-group button { background: var(--pure-white); color: black; border: none; padding: 0 15px; font-weight: 800; cursor: pointer; transition: 0.2s; }
-        .admin-input-group button:hover { background: var(--amg-tosca); }
-        
-        /* Tombol Nuke Khusus Admin */
-        .btn-nuke { width: 100%; margin-top: 10px; padding: 8px; background: #660000; color: #ffcccc; border: 1px solid #ff3333; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
-        .btn-nuke:hover { background: #ff3333; color: white; box-shadow: 0 0 15px rgba(255, 51, 51, 0.5); }
-
-        .log-box { flex-grow: 1; padding: 15px; font-family: monospace; font-size: 0.85rem; line-height: 1.6; overflow-y: auto; color: #aaa; }
-        .log-item { margin-bottom: 8px; padding-left: 10px; border-left: 2px solid #333; }
-        .log-item.admin { color: white; border-left-color: var(--amg-tosca); background: rgba(0, 161, 156, 0.05); }
-
-        .chat-container { display: flex; flex-direction: column; height: 100%; }
-        .chat-messages { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg { font-size: 0.85rem; max-width: 85%; }
-        .msg-body { background: #1a1a1a; padding: 10px; border-radius: 2px; border-left: 2px solid #555; word-wrap: break-word;}
+        /* Modul Chat */
+        .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg { display: flex; flex-direction: column; max-width: 80%; }
+        .msg-header { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px; display: flex; align-items: center; gap: 10px; font-weight: bold;}
+        .msg-body { background: var(--bg-panel); padding: 12px; border-radius: 0 8px 8px 8px; border: 1px solid #222; word-wrap: break-word; font-size: 0.9rem;}
         .msg.self { align-self: flex-end; }
-        .msg.self .msg-body { border-left: none; border-right: 2px solid var(--amg-tosca); background: #111; }
+        .msg.self .msg-header { flex-direction: row-reverse; }
+        .msg.self .msg-body { background: #0a1514; border-color: #003331; border-radius: 8px 0 8px 8px; }
         
-        .chat-input { display: flex; padding: 15px; background: #1a1a1a; border-top: 1px solid #222; }
-        .chat-input input { flex-grow: 1; background: transparent; border: none; color: white; outline: none; font-size: 0.9rem; }
-        .chat-input button { background: var(--amg-tosca); border: none; padding: 8px 15px; font-weight: 800; cursor: pointer; }
+        .chat-input { padding: 20px; background: var(--bg-panel); border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
+        .chat-input input { flex-grow: 1; background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 4px; outline: none; font-size: 0.9rem; }
+        .chat-input input:focus { border-color: var(--amg-tosca); }
+        .chat-input button { background: var(--amg-tosca); color: black; border: none; padding: 0 20px; font-weight: 800; border-radius: 4px; cursor: pointer; }
 
-        @media (max-width: 900px) { .paddock-container { grid-template-columns: 1fr; } }
+        /* Format Kode */
+        .code-wrapper { position: relative; background: #000; border: 1px solid #333; border-radius: 4px; margin-top: 8px; padding: 10px; padding-top: 35px; }
+        .code-wrapper pre { margin: 0; white-space: pre-wrap; font-family: monospace; font-size: 0.8rem; color: #00A19C; }
+        .btn-copy { position: absolute; top: 0; right: 0; background: #333; color: white; border: none; font-size: 0.65rem; font-weight: 800; padding: 5px 10px; cursor: pointer; border-bottom-left-radius: 4px; }
+        .btn-copy:hover { background: var(--amg-tosca); color: black; }
+        .btn-pin { background: none; border: none; cursor: pointer; opacity: 0.5; transition: 0.2s; font-size: 0.8rem; filter: grayscale(1); }
+        .btn-pin:hover { opacity: 1; filter: grayscale(0); transform: scale(1.2); }
+
+        /* Modul Statis (Docs, Tools, Storage) */
+        .static-content { padding: 30px; overflow-y: auto; color: var(--text-muted); line-height: 1.6; }
+        .static-content h3 { color: white; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px;}
+        .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;}
+        .tool-card { background: #111; border: 1px solid #333; padding: 20px; text-align: center; border-radius: 6px; cursor: pointer; transition: 0.2s;}
+        .tool-card:hover { border-color: var(--amg-tosca); background: #0a1514; }
+
+        /* 3. INFO PANEL (Kanan) */
+        .info-panel { width: 300px; background: var(--bg-panel); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .telemetry { padding: 20px; border-bottom: 1px solid var(--border-color); }
+        .data-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; font-weight: 800; color: var(--text-muted); }
+        .data-row span { color: white; font-family: monospace; }
+        
+        .directives-area { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden;}
+        .dir-header { padding: 15px; font-weight: 800; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; border-bottom: 1px solid #222; background: #0a0a0a;}
+        .dir-log { flex-grow: 1; padding: 15px; overflow-y: auto; font-family: monospace; font-size: 0.8rem; }
+        .log-item { margin-bottom: 10px; border-left: 2px solid var(--amg-tosca); padding-left: 10px; background: rgba(0,161,156,0.05); color: #ccc; }
+        
+        .admin-controls { padding: 15px; background: #050505; border-top: 1px solid #222; display: none; }
+        .admin-controls input { width: 100%; background: transparent; border: 1px solid #333; color: white; padding: 8px; margin-bottom: 10px; outline:none; font-family: monospace;}
+        .btn-broadcast { width: 100%; background: white; color: black; border: none; padding: 8px; font-weight: 800; cursor: pointer; margin-bottom: 5px;}
+        .btn-nuke { width: 100%; background: #440000; color: #ff8888; border: 1px solid red; padding: 8px; font-weight: 800; cursor: pointer; transition: 0.2s;}
+        .btn-nuke:hover { background: red; color: white; }
+
     </style>
 </head>
 <body>
 
-    <header>
-        <div style="font-weight: 900; letter-spacing: 2px; font-size: 1.3rem;">PADDOCK <span style="color:var(--amg-tosca)">PORTAL</span></div>
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <div id="utc-time" style="font-family: monospace; font-size: 0.9rem; color: var(--amg-tosca);">00:00:00 UTC</div>
-            <div class="operator-tag" id="op-tag">ID</div>
-            <button class="btn-logout" onclick="logout()" style="background:none; border:1px solid #444; color:#888; padding:4px 10px; cursor:pointer; font-size: 0.7rem; font-weight:800;">TERMINATE</button>
-        </div>
-    </header>
-
-    <div class="paddock-container">
-        <div class="panel">
-            <div class="panel-header">
-                System Briefing
-                <span id="status-indicator">INITIALIZING...</span>
-            </div>
+    <!-- 1. SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand-header">PADDOCK<span>OS</span></div>
+        <div class="nav-section">
+            <div class="nav-title">COMMUNICATIONS</div>
+            <button class="channel-btn active" onclick="switchTab('comms', this)">main-comms</button>
             
-            <div class="telemetry-bar">
-                <div class="data-box"><div class="data-label">Uptime</div><div class="data-value">100%</div></div>
-                <div class="data-box"><div class="data-label">Ping</div><div class="data-value" id="ping-val">12ms</div></div>
-                <div class="data-box"><div class="data-label">Safety</div><div class="data-value" style="color:var(--amg-tosca)">MAX</div></div>
-                <div class="data-box"><div class="data-label">Nodes</div><div class="data-value">03</div></div>
-            </div>
-
-            <div id="admin-panel">
-                <div class="admin-input-group">
-                    <input type="text" id="dir-input" placeholder="Enter Lead Directive..." autocomplete="off">
-                    <button onclick="sendDirective()">BROADCAST</button>
-                </div>
-                <!-- TOMBOL NUKE KHUSUS ADMIN -->
-                <button class="btn-nuke" onclick="clearLogs()">Nuke Database</button>
-            </div>
-
-            <div class="log-box" id="directives-log">
-                <div class="log-item">--- SECURE LOG INITIALIZED ---</div>
-            </div>
+            <div class="nav-title" style="margin-top: 20px;">WORKSPACE</div>
+            <button class="channel-btn" onclick="switchTab('docs', this)">documentation</button>
+            <button class="channel-btn" onclick="switchTab('tools', this)">cyber-tools</button>
+            <button class="channel-btn" onclick="switchTab('storage', this)">secure-storage</button>
         </div>
+        <div class="user-profile">
+            <div class="user-info">
+                <span class="u-id" id="ui-op-id">ID</span>
+                <span class="u-role" id="ui-op-role">ROLE</span>
+            </div>
+            <button class="btn-logout" onclick="logout()">EXIT</button>
+        </div>
+    </div>
 
-        <div class="panel">
-            <div class="panel-header">Encrypted Comms (Raw REST)</div>
+    <!-- 2. WORKSPACE CENTER -->
+    <div class="workspace">
+        <div class="ws-header" id="ws-header-title"># main-comms</div>
+        
+        <!-- Tab: COMMS (Real App) -->
+        <div id="tab-comms" class="view-panel active">
             <div class="chat-messages" id="chat-box"></div>
             <div class="chat-input">
-                <input type="text" id="chat-input" placeholder="Transmit message..." autocomplete="off">
-                <button onclick="sendChat()" id="btn-send">SEND</button>
+                <input type="text" id="chat-input" placeholder="Transmit message... (Use ``` for code block)" autocomplete="off">
+                <button onclick="sendChat()">SEND</button>
+            </div>
+        </div>
+
+        <!-- Tab: DOCS (Mockup) -->
+        <div id="tab-docs" class="view-panel">
+            <div class="static-content">
+                <h3>Developer Documentation</h3>
+                <p>Welcome to the PaddockOS Developer Hub. This environment is built using Vanilla JS, REST APIs, and Supabase RPCs for maximum stealth against standard web filtering.</p>
+                <br>
+                <b>System Architectures:</b>
+                <ul>
+                    <li>- Authentication: Secure RPC DB Validation.</li>
+                    <li>- Communication: REST API Long-Polling (Bypasses WSS blocks).</li>
+                    <li>- Syntax: Auto Markdown & Zero-width space sanitizer.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tab: TOOLS (Mockup) -->
+        <div id="tab-tools" class="view-panel">
+            <div class="static-content">
+                <h3>Tactical Cyber Tools</h3>
+                <p>Select a module to execute inside the browser engine.</p>
+                <div class="tool-grid">
+                    <div class="tool-card">📡 IP Tracer<br><small>Ready</small></div>
+                    <div class="tool-card">🔐 Hash Generator<br><small>Ready</small></div>
+                    <div class="tool-card">🕸️ Payload Encode<br><small>Ready</small></div>
+                    <div class="tool-card" style="opacity:0.5">📂 SQL Map<br><small>Offline</small></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: STORAGE (Mockup) -->
+        <div id="tab-storage" class="view-panel">
+            <div class="static-content">
+                <h3>Secure File Vault</h3>
+                <p>Encrypted object storage. (Requires Supabase Storage Buckets to be linked).</p>
+                <div style="margin-top: 20px; padding: 20px; border: 1px dashed #333; text-align: center;">
+                    DRAG & DROP FILES TO ENCRYPT AND UPLOAD
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- 3. INFO PANEL (Kanan) -->
+    <div class="info-panel">
+        <div class="telemetry">
+            <div class="data-row">STATUS <span id="status-indicator" style="color:var(--amg-tosca)">LINKED</span></div>
+            <div class="data-row">LATENCY <span id="ping-val">12ms</span></div>
+            <div class="data-row">TIME <span id="utc-time">00:00:00</span></div>
+        </div>
+        
+        <div class="directives-area">
+            <div class="dir-header">TACTICAL DIRECTIVES</div>
+            <div class="dir-log" id="directives-log"></div>
+        </div>
+
+        <div class="admin-controls" id="admin-panel">
+            <input type="text" id="dir-input" placeholder="Broadcast Directive..." autocomplete="off">
+            <button class="btn-broadcast" onclick="sendDirective()">BROADCAST</button>
+            <button class="btn-nuke" onclick="clearLogs()">NUKE DATABASE</button>
+        </div>
+    </div>
+
     <script>
-        // 1. SESSION GUARD & ADMIN CHECK
+        // --- 1. CORE & AUTH ---
         const activeOp = sessionStorage.getItem('activeOperator');
+        const roleOp = sessionStorage.getItem('operatorRole');
+        
         if (!activeOp) window.location.href = 'login.html';
         
-        document.getElementById('op-tag').innerText = activeOp;
+        document.getElementById('ui-op-id').innerText = activeOp;
+        document.getElementById('ui-op-role').innerText = roleOp || 'OPERATOR';
         
-        // Cuma OPS01 yang panel admin-nya dibuka
-        if (activeOp === 'OPS01') {
-            document.getElementById('admin-panel').style.display = 'block';
+        if (roleOp === 'ADMIN') document.getElementById('admin-panel').style.display = 'block';
+
+        function logout() { sessionStorage.clear(); window.location.href = 'login.html'; }
+
+        // --- 2. UI TABS SYSTEM ---
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.channel-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btnElement.classList.add('active');
+            document.getElementById('ws-header-title').innerText = '# ' + btnElement.innerText;
         }
 
-        function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
-
-        // 2. KREDENSIAL MURNI
-        const API_URL = 'https://gzvlwrwjofdvupvisvhr.supabase.co/rest/v1';
+        // --- 3. DATABASE ENGINE (REST) ---
+        const API_URL = '[https://gzvlwrwjofdvupvisvhr.supabase.co/rest/v1](https://gzvlwrwjofdvupvisvhr.supabase.co/rest/v1)';
         const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6dmx3cndqb2ZkdnVwdmlzdmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTU5OTksImV4cCI6MjA5MzI5MTk5OX0.1JSIGeJOtKqY41ZnJAwITwsJ_wx7QQnBv5XmfRZzcnQ';
-        
-        const HEADERS = {
-            'apikey': API_KEY,
-            'Authorization': 'Bearer ' + API_KEY,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
+        const HEADERS = { 'apikey': API_KEY, 'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' };
+
+        let lastChatId = 0; let lastDirId = 0;
+        window.chatCache = {};
+
+        // Format Teks (Anti Invisible Char + Code Block)
+        function formatMessage(text) {
+            let safe = text.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            safe = safe.replace(/```([\s\S]*?)```/g, function(m, code) {
+                const id = 'c-' + Math.random().toString(36).substr(2, 6);
+                return `<div class="code-wrapper"><button class="btn-copy" onclick="copyCode('${id}', this)">COPY</button><pre><code id="${id}">${code.trim()}</code></pre></div>`;
+            });
+            return safe;
+        }
+
+        window.copyCode = function(id, btn) {
+            navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => {
+                btn.innerText = "COPIED!"; btn.style.background = "#00A19C";
+                setTimeout(() => { btn.innerText = "COPY"; btn.style.background = "#333"; }, 2000);
+            });
         };
 
-        const statusEl = document.getElementById('status-indicator');
-        let lastChatId = 0;
-        let lastDirId = 0;
+        window.pinChat = async function(id) {
+            if (roleOp !== 'ADMIN') return;
+            const data = window.chatCache[id];
+            if (!data) return;
+            if(confirm("Pin as Directive?")) {
+                await fetch(API_URL + '/paddock_directives', { method: 'POST', headers: HEADERS, body: JSON.stringify({ message: `[PIN - ${data.operator_id}] ${data.message}` }) });
+                pollData();
+            }
+        };
 
-        // 3. RENDERER
         function renderChat(d) {
+            window.chatCache[d.id] = d;
             const box = document.getElementById('chat-box');
             const div = document.createElement('div');
             div.className = d.operator_id === activeOp ? 'msg self' : 'msg';
-            div.innerHTML = `<div style="font-size:0.6rem; color:#666; margin-bottom:2px;">${d.operator_id}</div><div class="msg-body">${d.message}</div>`;
+            
+            let pinBtn = roleOp === 'ADMIN' ? `<button class="btn-pin" onclick="pinChat(${d.id})">📌</button>` : '';
+            div.innerHTML = `<div class="msg-header"><span>${d.operator_id}</span> ${pinBtn}</div><div class="msg-body">${formatMessage(d.message)}</div>`;
             box.appendChild(div); box.scrollTop = box.scrollHeight;
         }
 
         function renderDir(d) {
             const box = document.getElementById('directives-log');
-            const div = document.createElement('div');
-            div.className = 'log-item admin';
-            div.innerHTML = `> [DIRECTIVE] ${d.message}`;
-            box.insertBefore(div, box.children[1] || box.firstChild);
+            const div = document.createElement('div'); div.className = 'log-item';
+            div.innerHTML = `> ${formatMessage(d.message)}`;
+            box.insertBefore(div, box.firstChild);
         }
 
-        // 4. PROTOKOL NUKE DATABASE (HANYA ADMIN)
-        async function clearLogs() {
-            // Lapis keamanan 2: Kalau bukan OPS01, batalkan
-            if (activeOp !== 'OPS01') return;
-
-            // Konfirmasi biar ga kepencet ga sengaja
-            const confirmNuke = confirm("AUTHORIZATION REQUIRED:\nLanjutkan protokol pemusnahan? Semua data chat dan pengumuman akan dihapus permanen.");
-            
-            if (confirmNuke) {
-                try {
-                    statusEl.innerText = "PURGING DATA...";
-                    statusEl.style.color = "red";
-
-                    // Hapus semua data yang ID-nya lebih dari 0
-                    await fetch(`${API_URL}/paddock_comms?id=gt.0`, { method: 'DELETE', headers: HEADERS });
-                    await fetch(`${API_URL}/paddock_directives?id=gt.0`, { method: 'DELETE', headers: HEADERS });
-
-                    // Bersihkan UI langsung
-                    document.getElementById('chat-box').innerHTML = '';
-                    document.getElementById('directives-log').innerHTML = '<div class="log-item">--- SECURE LOG INITIALIZED ---</div>';
-                    lastChatId = 0;
-                    lastDirId = 0;
-
-                    statusEl.innerText = "SECURE LINK ACTIVE";
-                    statusEl.style.color = "#00A19C";
-                    alert("DATABASE BERHASIL DIBERSIHKAN.");
-                } catch (err) {
-                    alert("GAGAL MENGHAPUS DATA: " + err.message);
-                }
-            }
-        }
-
-        // 5. PENGIRIMAN MURNI (POST)
         async function sendChat() {
             const el = document.getElementById('chat-input');
-            const msg = el.value.trim();
-            if(!msg) return;
-            el.value = '';
-            
-            const payload = { operator_id: activeOp, message: msg };
-            await fetch(API_URL + '/paddock_comms', { method: 'POST', headers: HEADERS, body: JSON.stringify(payload) });
-            pollData(); 
+            const msg = el.value.trim(); if(!msg) return; el.value = '';
+            await fetch(API_URL + '/paddock_comms', { method: 'POST', headers: HEADERS, body: JSON.stringify({ operator_id: activeOp, message: msg.replace(/[\u200B-\u200D\uFEFF]/g, '') }) });
+            pollData();
         }
 
         async function sendDirective() {
             const el = document.getElementById('dir-input');
-            const msg = el.value.trim();
-            if(!msg) return;
-            el.value = '';
-            
-            const payload = { message: msg };
-            await fetch(API_URL + '/paddock_directives', { method: 'POST', headers: HEADERS, body: JSON.stringify(payload) });
+            const msg = el.value.trim(); if(!msg) return; el.value = '';
+            await fetch(API_URL + '/paddock_directives', { method: 'POST', headers: HEADERS, body: JSON.stringify({ message: msg.replace(/[\u200B-\u200D\uFEFF]/g, '') }) });
             pollData();
         }
 
-        // 6. PENARIKAN DATA (GET) DENGAN SISTEM POLLING
+        async function clearLogs() {
+            if (roleOp !== 'ADMIN') return;
+            if (confirm("NUKE DATABASE?\nSeluruh data akan terhapus permanen.")) {
+                await fetch(`${API_URL}/paddock_comms?id=gt.0`, { method: 'DELETE', headers: HEADERS });
+                await fetch(`${API_URL}/paddock_directives?id=gt.0`, { method: 'DELETE', headers: HEADERS });
+                document.getElementById('chat-box').innerHTML = ''; document.getElementById('directives-log').innerHTML = '';
+                lastChatId = 0; lastDirId = 0;
+            }
+        }
+
         async function pollData() {
-            try {
-                const chatRes = await fetch(`${API_URL}/paddock_comms?select=*&id=gt.${lastChatId}&order=id.asc`, { headers: HEADERS });
-                if(chatRes.ok) {
-                    const chats = await chatRes.json();
-                    if(chats.length > 0) {
-                        chats.forEach(renderChat);
-                        lastChatId = chats[chats.length - 1].id;
-                    }
-                }
-
-                const dirRes = await fetch(`${API_URL}/paddock_directives?select=*&id=gt.${lastDirId}&order=id.asc`, { headers: HEADERS });
-                if(dirRes.ok) {
-                    const dirs = await dirRes.json();
-                    if(dirs.length > 0) {
-                        dirs.forEach(renderDir);
-                        lastDirId = dirs[dirs.length - 1].id;
-                    }
-                }
-
-                statusEl.innerText = "SECURE LINK ACTIVE";
-                statusEl.style.color = "#00A19C";
-            } catch (err) {
-                statusEl.innerText = "CONNECTION WEAK";
-                statusEl.style.color = "red";
-            }
+            const chatRes = await fetch(`${API_URL}/paddock_comms?select=*&id=gt.${lastChatId}&order=id.asc`, { headers: HEADERS });
+            if(chatRes.ok) { const chats = await chatRes.json(); if(chats.length>0){ chats.forEach(renderChat); lastChatId = chats[chats.length-1].id; }}
+            const dirRes = await fetch(`${API_URL}/paddock_directives?select=*&id=gt.${lastDirId}&order=id.asc`, { headers: HEADERS });
+            if(dirRes.ok) { const dirs = await dirRes.json(); if(dirs.length>0){ dirs.forEach(renderDir); lastDirId = dirs[dirs.length-1].id; }}
         }
 
-        // 7. ENGINE START
-        async function bootSequence() {
-            statusEl.innerText = "ESTABLISHING LINK...";
-            
-            try {
-                const chatRes = await fetch(`${API_URL}/paddock_comms?select=*&order=id.desc&limit=20`, { headers: HEADERS });
-                if(chatRes.ok) {
-                    const chats = await chatRes.json();
-                    chats.reverse().forEach(renderChat);
-                    if(chats.length > 0) lastChatId = chats[chats.length - 1].id;
-                }
-
-                const dirRes = await fetch(`${API_URL}/paddock_directives?select=*&order=id.desc&limit=10`, { headers: HEADERS });
-                if(dirRes.ok) {
-                    const dirs = await dirRes.json();
-                    dirs.reverse().forEach(renderDir);
-                    if(dirs.length > 0) lastDirId = dirs[dirs.length - 1].id;
-                }
-                
-                statusEl.innerText = "SECURE LINK ACTIVE";
-                statusEl.style.color = "#00A19C";
-
-                setInterval(pollData, 3000);
-
-            } catch (err) {
-                statusEl.innerText = "OFFLINE MODE";
-                statusEl.style.color = "red";
-            }
+        async function boot() {
+            const chatRes = await fetch(`${API_URL}/paddock_comms?select=*&order=id.desc&limit=30`, { headers: HEADERS });
+            if(chatRes.ok) { const chats = await chatRes.json(); chats.reverse().forEach(renderChat); if(chats.length>0) lastChatId = chats[chats.length-1].id; }
+            const dirRes = await fetch(`${API_URL}/paddock_directives?select=*&order=id.desc&limit=15`, { headers: HEADERS });
+            if(dirRes.ok) { const dirs = await dirRes.json(); dirs.reverse().forEach(renderDir); if(dirs.length>0) lastDirId = dirs[dirs.length-1].id; }
+            setInterval(pollData, 3000);
         }
+        boot();
 
-        bootSequence();
-
-        // 8. AESTHETICS
         setInterval(() => {
-            const now = new Date();
-            document.getElementById('utc-time').innerText = now.toUTCString().split(' ')[4] + ' UTC';
+            document.getElementById('utc-time').innerText = new Date().toUTCString().split(' ')[4] + ' UTC';
             document.getElementById('ping-val').innerText = Math.floor(Math.random() * 10 + 5) + 'ms';
         }, 1000);
 
