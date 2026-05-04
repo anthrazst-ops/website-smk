@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PADDOCK | CYBERSKALISKA</title>
     
-    <!-- CDN Supabase -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.38.4/supabase.min.js"></script>
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&display=swap');
         :root { --amg-tosca: #00A19C; --amg-black: #000000; --amg-dark: #0D0D0D; --amg-panel: #111111; --amg-silver: #A2AAAD; --pure-white: #FFFFFF; }
@@ -21,7 +18,7 @@
         .panel { background: var(--amg-dark); border: 1px solid #222; display: flex; flex-direction: column; overflow: hidden; }
         .panel-header { background: #1a1a1a; padding: 12px 15px; font-size: 0.8rem; font-weight: 800; color: var(--amg-silver); text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
         
-        #status-indicator { font-size: 0.7rem; color: #ffcc00; font-weight: bold; }
+        #status-indicator { font-size: 0.75rem; color: #ffcc00; font-weight: bold; font-family: monospace; }
 
         .telemetry-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; border-bottom: 1px solid #222; }
         .data-box { background: var(--amg-panel); border: 1px solid #1f1f1f; padding: 10px; border-left: 2px solid var(--amg-tosca); }
@@ -67,7 +64,7 @@
         <div class="panel">
             <div class="panel-header">
                 System Briefing
-                <span id="status-indicator">CONNECTING...</span>
+                <span id="status-indicator">INITIALIZING...</span>
             </div>
             
             <div class="telemetry-bar">
@@ -90,7 +87,7 @@
         </div>
 
         <div class="panel">
-            <div class="panel-header">Encrypted Comms</div>
+            <div class="panel-header">Encrypted Comms (Raw REST)</div>
             <div class="chat-messages" id="chat-box"></div>
             <div class="chat-input">
                 <input type="text" id="chat-input" placeholder="Transmit message..." autocomplete="off">
@@ -100,6 +97,7 @@
     </div>
 
     <script>
+        // 1. SESSION GUARD
         const activeOp = sessionStorage.getItem('activeOperator');
         if (!activeOp) window.location.href = 'login.html';
         
@@ -108,24 +106,22 @@
 
         function logout() { sessionStorage.clear(); window.location.href = 'index.html'; }
 
-        const URL = 'https://gzvlwrwjofdvupvisvhr.supabase.co';
-        const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6dmx3cndqb2ZkdnVwdmlzdmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTU5OTksImV4cCI6MjA5MzI5MTk5OX0.1JSIGeJOtKqY41ZnJAwITwsJ_wx7QQnBv5XmfRZzcnQ';
+        // 2. KREDENSIAL MURNI
+        const API_URL = 'https://gzvlwrwjofdvupvisvhr.supabase.co/rest/v1';
+        const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6dmx3cndqb2ZkdnVwdmlzdmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTU5OTksImV4cCI6MjA5MzI5MTk5OX0.1JSIGeJOtKqY41ZnJAwITwsJ_wx7QQnBv5XmfRZzcnQ';
         
-        // --- THE MAGIC FIX ---
-        // Mematikan persistSession agar Supabase TIDAK NYENTUH LocalStorage sama sekali.
-        // Ini bikin kode lu kebal dari blokiran Brave, Firefox Strict, dan Instagram WebView.
-        const dbOptions = {
-            auth: {
-                persistSession: false,
-                autoRefreshToken: false,
-                detectSessionInUrl: false
-            }
+        const HEADERS = {
+            'apikey': API_KEY,
+            'Authorization': 'Bearer ' + API_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
         };
-        const db = window.supabase.createClient(URL, KEY, dbOptions);
-        // ----------------------
 
         const statusEl = document.getElementById('status-indicator');
+        let lastChatId = 0;
+        let lastDirId = 0;
 
+        // 3. RENDERER
         function renderChat(d) {
             const box = document.getElementById('chat-box');
             const div = document.createElement('div');
@@ -142,12 +138,16 @@
             box.insertBefore(div, box.children[1] || box.firstChild);
         }
 
+        // 4. PENGIRIMAN MURNI (POST)
         async function sendChat() {
             const el = document.getElementById('chat-input');
             const msg = el.value.trim();
             if(!msg) return;
             el.value = '';
-            await db.from('paddock_comms').insert([{ operator_id: activeOp, message: msg }]);
+            
+            const payload = { operator_id: activeOp, message: msg };
+            await fetch(API_URL + '/paddock_comms', { method: 'POST', headers: HEADERS, body: JSON.stringify(payload) });
+            pollData(); // Langsung refresh abis ngirim
         }
 
         async function sendDirective() {
@@ -155,33 +155,78 @@
             const msg = el.value.trim();
             if(!msg) return;
             el.value = '';
-            await db.from('paddock_directives').insert([{ message: msg }]);
+            
+            const payload = { message: msg };
+            await fetch(API_URL + '/paddock_directives', { method: 'POST', headers: HEADERS, body: JSON.stringify(payload) });
+            pollData();
         }
 
-        async function runEngine() {
+        // 5. PENARIKAN DATA (GET) DENGAN SISTEM POLLING
+        async function pollData() {
             try {
-                const { data: chats } = await db.from('paddock_comms').select('*').order('id', {ascending: true}).limit(30);
-                if (chats) chats.forEach(renderChat);
+                // Tarik Chat Baru
+                const chatRes = await fetch(`${API_URL}/paddock_comms?select=*&id=gt.${lastChatId}&order=id.asc`, { headers: HEADERS });
+                if(chatRes.ok) {
+                    const chats = await chatRes.json();
+                    if(chats.length > 0) {
+                        chats.forEach(renderChat);
+                        lastChatId = chats[chats.length - 1].id;
+                    }
+                }
 
-                const { data: dirs } = await db.from('paddock_directives').select('*').order('id', {ascending: false}).limit(10);
-                if (dirs) dirs.forEach(renderDir);
+                // Tarik Directive Baru
+                const dirRes = await fetch(`${API_URL}/paddock_directives?select=*&id=gt.${lastDirId}&order=id.asc`, { headers: HEADERS });
+                if(dirRes.ok) {
+                    const dirs = await dirRes.json();
+                    if(dirs.length > 0) {
+                        dirs.forEach(renderDir);
+                        lastDirId = dirs[dirs.length - 1].id;
+                    }
+                }
 
-                db.channel('paddock_main')
-                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_comms' }, p => renderChat(p.new))
-                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'paddock_directives' }, p => renderDir(p.new))
-                    .subscribe();
-
-                statusEl.innerText = "ENCRYPTION ACTIVE";
+                statusEl.innerText = "SECURE LINK ACTIVE";
                 statusEl.style.color = "#00A19C";
             } catch (err) {
-                statusEl.innerText = "DB ERROR";
+                statusEl.innerText = "CONNECTION WEAK";
                 statusEl.style.color = "red";
-                console.error(err);
             }
         }
-        
-        runEngine();
 
+        // 6. ENGINE START
+        async function bootSequence() {
+            statusEl.innerText = "ESTABLISHING LINK...";
+            
+            // Initial Load (Ambil history terakhir)
+            try {
+                const chatRes = await fetch(`${API_URL}/paddock_comms?select=*&order=id.desc&limit=20`, { headers: HEADERS });
+                if(chatRes.ok) {
+                    const chats = await chatRes.json();
+                    chats.reverse().forEach(renderChat);
+                    if(chats.length > 0) lastChatId = chats[chats.length - 1].id;
+                }
+
+                const dirRes = await fetch(`${API_URL}/paddock_directives?select=*&order=id.desc&limit=10`, { headers: HEADERS });
+                if(dirRes.ok) {
+                    const dirs = await dirRes.json();
+                    dirs.reverse().forEach(renderDir);
+                    if(dirs.length > 0) lastDirId = dirs[dirs.length - 1].id;
+                }
+                
+                statusEl.innerText = "SECURE LINK ACTIVE";
+                statusEl.style.color = "#00A19C";
+
+                // Polling setiap 3 detik gantiin WebSocket
+                setInterval(pollData, 3000);
+
+            } catch (err) {
+                statusEl.innerText = "OFFLINE MODE";
+                statusEl.style.color = "red";
+            }
+        }
+
+        bootSequence();
+
+        // 7. AESTHETICS
         setInterval(() => {
             const now = new Date();
             document.getElementById('utc-time').innerText = now.toUTCString().split(' ')[4] + ' UTC';
